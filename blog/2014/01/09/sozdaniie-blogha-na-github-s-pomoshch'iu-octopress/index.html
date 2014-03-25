@@ -1,0 +1,499 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Создание блога на Github с помощью Octopress - vylgin</title>
+  <meta name="author" content="Виталий Вылгин">
+
+  
+  <meta name="description" content="Octopress — это фреймворк, позволяющий генерировать статические HTML сайты с помощью Jekyll. Каждый, кто начинает вести свой блог на нем, пишет &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="vylgin" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-47706502-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">vylgin</a></h1>
+  
+    <h2>Блог разработчика ПО</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="подписаться на RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.vylgin.pro" />
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив статей</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Создание блога на Github с помощью Octopress</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-09T06:13:50-05:00" pubdate data-updated="true">Четверг,  9 Января 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Octopress — это фреймворк, позволяющий генерировать статические HTML сайты с помощью Jekyll. Каждый, кто начинает вести свой блог на нем, пишет подобную статью, это уже стало традицией, поэтому я опущу то, как установить ruby, rvm, завести акканут на гитхабе, настроить ssh-ключи и т.д., а акцентирую внимание на более интересных деталях.</p>
+
+<!-- more -->
+
+
+<h3>Цель</h3>
+
+<p>Моя цель &ndash; создать собственный блог с минимальными временными и материальными вложениями на своем домене (<a href="http://blog.vylgin.pro">http://blog.vylgin.pro</a>). Можно завести блог бесплатно, но он будет доступен по адресу <a href="http://username.github.io,">http://username.github.io,</a> где <em>username</em> &ndash; это имя пользователя на гитхабе.</p>
+
+<h3>Установка Octopress+GitHub Pages</h3>
+
+<p>Первым делом необходимо установить сам octopress, клонировав репозиторий в каталог, где будут находиться исходные файлы:</p>
+
+<pre><code>git clone git://github.com/imathis/octopress.git octopress
+cd octopress
+bundle install
+</code></pre>
+
+<p>В этот момент возникла ошибка о том, что не установлен пакет fast-stemmer версии 1.0.1, в описании ошибки было указано, как установить необходимую версию.</p>
+
+<pre><code>sudo gem install fast-stemmer -v '1.0.1'
+bundle install
+</code></pre>
+
+<p>Если ошибки не было, то выполняем следующие команды:</p>
+
+<pre><code>rake install
+rake setup_github_pages
+</code></pre>
+
+<p>В этом моменте надо будет указать адрес репозитория на github, например: git@github.com:<em>username</em>/<em>username</em>.github.io.git</p>
+
+<p>Блог создался, теперь можно сгененировать его из исходников, запустить локально (по-умолчанию он будет доступен по адресу <a href="http://localhost:4000">http://localhost:4000</a>) и задеплоить на гитхаб:</p>
+
+<pre><code>rake generate
+rake preview    
+rake deploy
+</code></pre>
+
+<h3>Привязка собственного домена</h3>
+
+<p>Гитхаб можно считать полноценным хостингом для статических сайтов, привязав собственный домен согласно <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">документации</a>. Для этого нужно:</p>
+
+<ol>
+<li>Создать файл <em>CNAME</em> в каталоге <em>source</em> и записать в него имя домена, по которому будет доступен блог.</li>
+<li>Настроить DNS:
+
+<ul>
+<li>Добавить запись <strong>A</strong> с именем хоста <strong>github.map.fastly.net</strong> и IP-адресом <strong>199.27.76.133</strong></li>
+<li>Добавить запись <strong>CNAME</strong> с именем <strong><em>username</em>.github.io.</strong> и значением <strong>github.map.fastly.net.</strong> (точки в конце обязательны)</li>
+<li>Добавить запись <strong>CNAME</strong> с именем <strong>blog</strong> и значением <strong><em>username</em>.github.io.</strong> (точки в конце обязательны, blog &ndash; имя моего поддомена)</li>
+<li>Пример моих настроек:</li>
+</ul>
+</li>
+</ol>
+
+
+<p><img class="center" src="/images/post_1/img1.png"></p>
+
+<p>Теперь мой блог доступен по адресу <a href="http://blog.vylgin.pro.">http://blog.vylgin.pro.</a></p>
+
+<h3>Настройка Octopress</h3>
+
+<h4>Изменение названия и описание блога</h4>
+
+<p>Для изменения названия и описания можно отредактировать следующие строки в файле _config.yml:</p>
+
+<pre><code>url: http://username.github.io
+title: Название блога
+subtitle: Подзаголовок блога
+author: Имя автора
+simple_search: http://google.com/search
+description: Описание блога
+</code></pre>
+
+<h4>Русификация</h4>
+
+<p>Подробно о русификации octopress описано в <a href="http://zenbro.github.io/blog/2013/09/21/octopress-russification/">этой статье</a>.</p>
+
+<h3>Добавление статей</h3>
+
+<p>Новая статья добавляется командой:</p>
+
+<pre><code>rake new_post["Название новой статьи"]
+</code></pre>
+
+<h4>Превью статьи на главной странице</h4>
+
+<p>Если статья длинная, то можно добавить кнопку &ldquo;Читать дальше&rdquo; после абзаца, для этого нужно изменить строку в файле _config.yml, указав текст кнопки:</p>
+
+<pre><code>excerpt_link: "Читать дальше &amp;rarr;" 
+</code></pre>
+
+<p>В файле статьи, после абзаца нужно добавить строку:</p>
+
+<pre><code>&lt;!-- more --&gt;
+</code></pre>
+
+<h3>Сохранение исходных файлов на github</h3>
+
+<p>Удобно хранить на гитхабе не только сгенерированный статический сайт, но и исходные фалы статей и настроек, чтобы иметь возможность редактировать блог на других компьютерах, да и просто иметь бэкап на всякий случай.
+Нужно закоммитить изменения, с добавлением новых файлов (ключ -a) и отправить изменения в центральный репозиторий:</p>
+
+<pre><code>git commit -a
+git push origin source
+</code></pre>
+
+<h3>Продолжение редактирования блога с другого компьютера</h3>
+
+<p>После того, как все исходные файлы блога стали храниться на гитхабе, можно клонировать репозиторий на другой компьютер, для этого достаточно выполнить:</p>
+
+<pre><code>git clone git@github.com:*username*/*username*.github.io.git
+</code></pre>
+
+<p>Если нет доступа к гитхабу по ssh:</p>
+
+<pre><code>git clone https://github.com/*username*/*username*.github.io.git
+</code></pre>
+
+<p>Мы находимся в ветке <em>master</em>, в которой содержатся сгенерированные файлы блога, чтобы иметь возможность редактировать, необходимо переключиться в ветку <em>source</em>:</p>
+
+<pre><code>git checkout source
+</code></pre>
+
+<p>Нужно привязать локальный репозиторий к центральному на гитхабе, для этого нужно выполнить команду, указав адрес репозитория (git@github.com:<em>username</em>/<em>username</em>.github.io.git):</p>
+
+<pre><code>rake setup_github_pages
+</code></pre>
+
+<p>Теперь можно можно обновлять блог командой:</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>В этот момент может возникнуть ошибка:</p>
+
+<pre><code>Pushing generated _deploy website
+To git@github.com:vylgin/vylgin.github.io.git
+ ! [rejected]        master -&gt; master (non-fast-forward)
+error: failed to push some refs to 'git@github.com:vylgin/vylgin.github.io.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Merge the remote changes (e.g. 'git pull')
+hint: before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+</code></pre>
+
+<p>Она возникает из-за того, что отличаются файлы в ветке центральной ветке <em>master</em> и локальном каталоге <em>_deploy</em>. Для исправления нужно перейти в каталог <em>_deploy</em>:</p>
+
+<pre><code>cd _deploy
+</code></pre>
+
+<p>Забрать и слить удаленную ветку <em>master</em> с локальной:</p>
+
+<pre><code>git pull origin master
+</code></pre>
+
+<p>Теперь нужно разрешить конфликты, в интернете полно информации, как это сделать, лично я использовал программу git-cola и meld. После того, как конфликты разрешены, можно сделать коммит и отправить изменения в центральный репозиторий:</p>
+
+<pre><code>git commit -m "Исправлены конфликты"
+git push origin master
+</code></pre>
+
+<p>Конфликты разрешены, можно перейти в каталог с блогом:</p>
+
+<pre><code>cd ..
+</code></pre>
+
+<p>И воспользоваться командой:</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>После внесения изменений нужно не забыть сделать коммит и залить изменения на гитхаб:</p>
+
+<pre><code>git commit -a
+git push origin source
+</code></pre>
+
+<h3>Возможные ошибки</h3>
+
+<p>У меня возникли проблемы с rake, при вызове команд появлялась ошибка:</p>
+
+<pre><code>/usr/local/bin/rake:23:in `load': cannot load such file -- /usr/share/rubygems-integration/1.9.1/gems/rake-10.0.4/bin/rake (LoadError)
+    from /usr/local/bin/rake:23:in `&lt;main&gt;'
+</code></pre>
+
+<p>Быстрым решением является вызов команды:</p>
+
+<pre><code>bundle exec rake имя_команды
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Опубликовал <span class="fn">Виталий Вылгин</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-09T06:13:50-05:00" pubdate data-updated="true">Четверг,  9 Января 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/github/'>github</a>, <a class='category' href='/blog/categories/octopress/'>octopress</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/" data-via="vylgin" data-counturl="http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/02/03/oracle-database-i-khranimyie-protsiedury-na-iazykie-java/" title="Next Post: Oracle Database и хранимые процедуры на языке Java">Oracle Database и хранимые процедуры на языке Java &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Комментарии</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Недавние статьи</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/03/25/sozdaniie-sliding-menu-prilozhieniia-v-android-studio/">Создание Sliding Menu приложения в Android Studio</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/03/oracle-database-i-khranimyie-protsiedury-na-iazykie-java/">Oracle Database и хранимые процедуры на языке Java</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/">Создание блога на Github с помощью Octopress</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Категории</h1>
+  <ul id="categories">
+    <a href='/blog/categories/actionbarsherlock/'>actionbarsherlock (1)</a> <a href='/blog/categories/android/'>android (1)</a> <a href='/blog/categories/github/'>github (1)</a> <a href='/blog/categories/java/'>java (1)</a> <a href='/blog/categories/octopress/'>octopress (1)</a> <a href='/blog/categories/oracle/'>oracle (1)</a> <a href='/blog/categories/slidingmenu/'>slidingmenu (1)</a> 
+  </ul>
+</section>
+<section>
+  <h1>Мои проекты на GitHub</h1>
+  <ul id="gh_repos">
+    <li class="loading">Загрузка проектов...</li>
+  </ul>
+  
+  <a href="https://github.com/vylgin">@vylgin</a> я на GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'vylgin',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<a class="twitter-timeline" href="https://twitter.com/vylgin" data-widget-id="429501702899646464">Твиты пользователя @vylgin</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/106228886204201361559?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Виталий Вылгин -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'vylginblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/';
+        var disqus_url = 'http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

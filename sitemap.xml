@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+    <url>
+        <loc>
+            http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/
+        </loc>
+        <lastmod>2014-03-25T16:01:53-04:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://blog.vylgin.pro/blog/2014/02/03/oracle-database-i-khranimyie-protsiedury-na-iazykie-java/
+        </loc>
+        <lastmod>2014-03-25T16:03:20-04:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://blog.vylgin.pro/blog/2014/03/25/sozdaniie-sliding-menu-prilozhieniia-v-android-studio/
+        </loc>
+        <lastmod>2014-03-25T16:55:51-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://blog.vylgin.pro/blog/archives/</loc>
+        <lastmod>2014-03-25T16:55:51-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://blog.vylgin.pro/robots.txt</loc>
+        <lastmod>2014-03-25T09:24:45-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://blog.vylgin.pro/</loc>
+        <lastmod>2014-03-25T16:55:51-04:00</lastmod>
+    </url>
+</urlset>

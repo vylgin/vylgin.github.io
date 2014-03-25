@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Категория: Octopress | vylgin]]></title>
+  <link href="http://blog.vylgin.pro/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://blog.vylgin.pro/"/>
+  <updated>2014-03-25T16:55:51-04:00</updated>
+  <id>http://blog.vylgin.pro/</id>
+  <author>
+    <name><![CDATA[Виталий Вылгин]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Создание блога на Github с помощью Octopress]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/"/>
+    <updated>2014-01-09T06:13:50-05:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch'iu-octopress</id>
+    <content type="html"><![CDATA[<p>Octopress — это фреймворк, позволяющий генерировать статические HTML сайты с помощью Jekyll. Каждый, кто начинает вести свой блог на нем, пишет подобную статью, это уже стало традицией, поэтому я опущу то, как установить ruby, rvm, завести акканут на гитхабе, настроить ssh-ключи и т.д., а акцентирую внимание на более интересных деталях.</p>
+
+<!-- more -->
+
+
+<h3>Цель</h3>
+
+<p>Моя цель &ndash; создать собственный блог с минимальными временными и материальными вложениями на своем домене (<a href="http://blog.vylgin.pro">http://blog.vylgin.pro</a>). Можно завести блог бесплатно, но он будет доступен по адресу <a href="http://username.github.io,">http://username.github.io,</a> где <em>username</em> &ndash; это имя пользователя на гитхабе.</p>
+
+<h3>Установка Octopress+GitHub Pages</h3>
+
+<p>Первым делом необходимо установить сам octopress, клонировав репозиторий в каталог, где будут находиться исходные файлы:</p>
+
+<pre><code>git clone git://github.com/imathis/octopress.git octopress
+cd octopress
+bundle install
+</code></pre>
+
+<p>В этот момент возникла ошибка о том, что не установлен пакет fast-stemmer версии 1.0.1, в описании ошибки было указано, как установить необходимую версию.</p>
+
+<pre><code>sudo gem install fast-stemmer -v '1.0.1'
+bundle install
+</code></pre>
+
+<p>Если ошибки не было, то выполняем следующие команды:</p>
+
+<pre><code>rake install
+rake setup_github_pages
+</code></pre>
+
+<p>В этом моменте надо будет указать адрес репозитория на github, например: git@github.com:<em>username</em>/<em>username</em>.github.io.git</p>
+
+<p>Блог создался, теперь можно сгененировать его из исходников, запустить локально (по-умолчанию он будет доступен по адресу <a href="http://localhost:4000">http://localhost:4000</a>) и задеплоить на гитхаб:</p>
+
+<pre><code>rake generate
+rake preview    
+rake deploy
+</code></pre>
+
+<h3>Привязка собственного домена</h3>
+
+<p>Гитхаб можно считать полноценным хостингом для статических сайтов, привязав собственный домен согласно <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">документации</a>. Для этого нужно:</p>
+
+<ol>
+<li>Создать файл <em>CNAME</em> в каталоге <em>source</em> и записать в него имя домена, по которому будет доступен блог.</li>
+<li>Настроить DNS:
+
+<ul>
+<li>Добавить запись <strong>A</strong> с именем хоста <strong>github.map.fastly.net</strong> и IP-адресом <strong>199.27.76.133</strong></li>
+<li>Добавить запись <strong>CNAME</strong> с именем <strong><em>username</em>.github.io.</strong> и значением <strong>github.map.fastly.net.</strong> (точки в конце обязательны)</li>
+<li>Добавить запись <strong>CNAME</strong> с именем <strong>blog</strong> и значением <strong><em>username</em>.github.io.</strong> (точки в конце обязательны, blog &ndash; имя моего поддомена)</li>
+<li>Пример моих настроек:</li>
+</ul>
+</li>
+</ol>
+
+
+<p><img class="center" src="/images/post_1/img1.png"></p>
+
+<p>Теперь мой блог доступен по адресу <a href="http://blog.vylgin.pro.">http://blog.vylgin.pro.</a></p>
+
+<h3>Настройка Octopress</h3>
+
+<h4>Изменение названия и описание блога</h4>
+
+<p>Для изменения названия и описания можно отредактировать следующие строки в файле _config.yml:</p>
+
+<pre><code>url: http://username.github.io
+title: Название блога
+subtitle: Подзаголовок блога
+author: Имя автора
+simple_search: http://google.com/search
+description: Описание блога
+</code></pre>
+
+<h4>Русификация</h4>
+
+<p>Подробно о русификации octopress описано в <a href="http://zenbro.github.io/blog/2013/09/21/octopress-russification/">этой статье</a>.</p>
+
+<h3>Добавление статей</h3>
+
+<p>Новая статья добавляется командой:</p>
+
+<pre><code>rake new_post["Название новой статьи"]
+</code></pre>
+
+<h4>Превью статьи на главной странице</h4>
+
+<p>Если статья длинная, то можно добавить кнопку &ldquo;Читать дальше&rdquo; после абзаца, для этого нужно изменить строку в файле _config.yml, указав текст кнопки:</p>
+
+<pre><code>excerpt_link: "Читать дальше &amp;rarr;" 
+</code></pre>
+
+<p>В файле статьи, после абзаца нужно добавить строку:</p>
+
+<pre><code>&lt;!-- more --&gt;
+</code></pre>
+
+<h3>Сохранение исходных файлов на github</h3>
+
+<p>Удобно хранить на гитхабе не только сгенерированный статический сайт, но и исходные фалы статей и настроек, чтобы иметь возможность редактировать блог на других компьютерах, да и просто иметь бэкап на всякий случай.
+Нужно закоммитить изменения, с добавлением новых файлов (ключ -a) и отправить изменения в центральный репозиторий:</p>
+
+<pre><code>git commit -a
+git push origin source
+</code></pre>
+
+<h3>Продолжение редактирования блога с другого компьютера</h3>
+
+<p>После того, как все исходные файлы блога стали храниться на гитхабе, можно клонировать репозиторий на другой компьютер, для этого достаточно выполнить:</p>
+
+<pre><code>git clone git@github.com:*username*/*username*.github.io.git
+</code></pre>
+
+<p>Если нет доступа к гитхабу по ssh:</p>
+
+<pre><code>git clone https://github.com/*username*/*username*.github.io.git
+</code></pre>
+
+<p>Мы находимся в ветке <em>master</em>, в которой содержатся сгенерированные файлы блога, чтобы иметь возможность редактировать, необходимо переключиться в ветку <em>source</em>:</p>
+
+<pre><code>git checkout source
+</code></pre>
+
+<p>Нужно привязать локальный репозиторий к центральному на гитхабе, для этого нужно выполнить команду, указав адрес репозитория (git@github.com:<em>username</em>/<em>username</em>.github.io.git):</p>
+
+<pre><code>rake setup_github_pages
+</code></pre>
+
+<p>Теперь можно можно обновлять блог командой:</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>В этот момент может возникнуть ошибка:</p>
+
+<pre><code>Pushing generated _deploy website
+To git@github.com:vylgin/vylgin.github.io.git
+ ! [rejected]        master -&gt; master (non-fast-forward)
+error: failed to push some refs to 'git@github.com:vylgin/vylgin.github.io.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Merge the remote changes (e.g. 'git pull')
+hint: before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+</code></pre>
+
+<p>Она возникает из-за того, что отличаются файлы в ветке центральной ветке <em>master</em> и локальном каталоге <em>_deploy</em>. Для исправления нужно перейти в каталог <em>_deploy</em>:</p>
+
+<pre><code>cd _deploy
+</code></pre>
+
+<p>Забрать и слить удаленную ветку <em>master</em> с локальной:</p>
+
+<pre><code>git pull origin master
+</code></pre>
+
+<p>Теперь нужно разрешить конфликты, в интернете полно информации, как это сделать, лично я использовал программу git-cola и meld. После того, как конфликты разрешены, можно сделать коммит и отправить изменения в центральный репозиторий:</p>
+
+<pre><code>git commit -m "Исправлены конфликты"
+git push origin master
+</code></pre>
+
+<p>Конфликты разрешены, можно перейти в каталог с блогом:</p>
+
+<pre><code>cd ..
+</code></pre>
+
+<p>И воспользоваться командой:</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>После внесения изменений нужно не забыть сделать коммит и залить изменения на гитхаб:</p>
+
+<pre><code>git commit -a
+git push origin source
+</code></pre>
+
+<h3>Возможные ошибки</h3>
+
+<p>У меня возникли проблемы с rake, при вызове команд появлялась ошибка:</p>
+
+<pre><code>/usr/local/bin/rake:23:in `load': cannot load such file -- /usr/share/rubygems-integration/1.9.1/gems/rake-10.0.4/bin/rake (LoadError)
+    from /usr/local/bin/rake:23:in `&lt;main&gt;'
+</code></pre>
+
+<p>Быстрым решением является вызов команды:</p>
+
+<pre><code>bundle exec rake имя_команды
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

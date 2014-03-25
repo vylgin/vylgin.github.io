@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Категория: Oracle | vylgin]]></title>
+  <link href="http://blog.vylgin.pro/blog/categories/oracle/atom.xml" rel="self"/>
+  <link href="http://blog.vylgin.pro/"/>
+  <updated>2014-03-25T16:55:51-04:00</updated>
+  <id>http://blog.vylgin.pro/</id>
+  <author>
+    <name><![CDATA[Виталий Вылгин]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Oracle Database и хранимые процедуры на языке Java]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/02/03/oracle-database-i-khranimyie-protsiedury-na-iazykie-java/"/>
+    <updated>2014-02-03T14:19:47-05:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/02/03/oracle-database-i-khranimyie-protsiedury-na-iazykie-java</id>
+    <content type="html"><![CDATA[<p><img class="left" src="/images/post_2/java_oracle_logo.jpg">
+В БД Oracle можно использовать хранимые процедуры и хранимые функции на языке Java благодаря встроенной JVM. С помощью них можно выполнять те задачи, с которыми не справляется PL/SQL, например, если необходимо обеспечить взаимодействие с операционной системой.</p>
+
+<p>Для создания хранимой процедуры нужно выполнить три действия:</p>
+
+<ol>
+<li>Создать исходный код с хранимой процедурой на языке Java.</li>
+<li>Загрузить скомпилированный код в Oracle.</li>
+<li>Создать псевдоним хранимой процедуры на PL/SQL.</li>
+</ol>
+
+
+<p>Рассмотрим каждое из них.</p>
+
+<!-- more -->
+
+
+<h4>1. Создание исходного кода хранимой процедуры на языке Java</h4>
+
+<p>Для создания хранимой процедуры или функции на языке Java, нужно создать класс, в нем определить публичный статический метод, от возвращаемого значения которого зависит будет ли это метод хранимой процедурой или хранимой функцией.</p>
+
+<p><code>public static void procedure() { }</code> &ndash; хранимая процедура.</p>
+
+<p><code>public static int function() { return -1; }</code> &ndash; хранимая функция.</p>
+
+<p>Для использования IN параметра, нужно в статический метод передать ссылку на объект.</p>
+
+<pre><code>public static void procedure(String str) { }
+</code></pre>
+
+<p>Для использования OUT или IN OUT параметра, нужно передать ссылку на массив.</p>
+
+<pre><code>public static void procedure(String[] str) {}
+</code></pre>
+
+<h4>2. Загрузка скомпилированного кода в Oracle</h4>
+
+<p>Загрузить созданный класс можно с помощью командной строки:</p>
+
+<pre><code>javac Swapper.java
+$ loadjava -user username/password Swapper.class
+</code></pre>
+
+<p>Я использовал Oracle SQL Developer и с помощью него загружал файл с исходным кодом:</p>
+
+<p><img class="center" src="/images/post_2/img_2.png"></p>
+
+<h4>3. Создание псевдонима хранимой процедуры на PL/SQL</h4>
+
+<p>Псевдоним на PL/SQL для Java кода можно создать по шаблону</p>
+
+<pre><code>CREATE OR REPLACE PROCEDURE имя_процедуры (x IN NUMBER, y IN OUT NUMBER)
+AS LANGUAGE JAVA
+NAME 'ИмяКласса.название_метода(int[], int[])';
+</code></pre>
+
+<h3>Пример создания хранимой процедуры.</h3>
+
+<p>Рассмотрим пример хранимой процедуры для обмена значений двух целочисленных переменных.</p>
+
+<ol>
+<li><p>Создадим класс и статический метод для хранимой процедуры:</p>
+
+<pre><code> public class Swapper {
+   public static void swap (int[] x, int[] y) {
+     int tmp = x[0];
+     x[0] = y[0];
+     y[0] = tmp;
+   }
+ }
+</code></pre></li>
+<li><p>Скомпилируем и загрузим класс в Oracle Database:</p>
+
+<pre><code> javac Swapper.java
+ $ loadjava -user username/password Swapper.class
+</code></pre></li>
+<li><p>Создадим псевдоним хранимой процедуры на PS/SQL:</p>
+
+<pre><code> CREATE OR REPLACE PROCEDURE swap (x IN OUT NUMBER, y IN OUT NUMBER)
+ AS LANGUAGE JAVA
+ NAME 'Swapper.swap(int[], int[])';
+</code></pre></li>
+<li><p>Проверим работу созданной процедуры:</p>
+
+<pre><code> SET SERVEROUTPUT ON
+ declare
+    a number := 5;
+    b number := 3;
+ begin
+    swap(a, b);
+    dbms_output.put_line(a || ' ' || b);
+ end;
+ /
+</code></pre>
+
+<p> Убедимся, что на выводе отобразилось <code>3 5</code>.</p></li>
+</ol>
+
+
+<h3>Вывод отладочной информации в dbms</h3>
+
+<p>Вывод отладочной информации с использованием <code>System.out.println("Отладочное сообщение")</code> не работает в хранимых процедурах, нужно подключиться к dbms текущего коннекта, для этого можно написать собственный метод:</p>
+
+<pre><code>private static void log(String s) {
+    try {
+        PreparedStatement ps = new OracleDriver()
+                    .defaultConnection()
+                    .prepareStatement("begin dbms_output.put_line(:x); end;");
+        ps.setString(1, s);
+        ps.execute();
+        ps.close();
+    } catch (SQLException e) {
+        // Обработка исключения
+    }
+}
+</code></pre>
+
+<h4>Пример хранимой процедуры с выводом отладочной информации</h4>
+
+<ol>
+<li><p>Создание Java-кода:</p>
+
+<pre><code> import java.sql.*;
+ import oracle.jdbc.*;
+
+ public class Example {
+
+     public static void example (int x) {
+         int z = x + 1;
+         log("z = " + z);
+     }
+
+     private static void log(String s) {
+         try {
+             PreparedStatement ps = new OracleDriver()
+                         .defaultConnection()
+                         .prepareStatement("begin dbms_output.put_line(:x); end;");
+             ps.setString(1, s);
+             ps.execute();
+             ps.close();
+         } catch (SQLException e) {
+             // Обработка исключения
+         }
+     }
+ }
+</code></pre></li>
+<li><p>Компилирование и загрузка Java-кода в Oracle Database:</p>
+
+<pre><code> javac Example.java
+ $ loadjava -user username/password Example.class
+</code></pre></li>
+<li><p>Создание псевдонима хранимой процедуры на PL/SQL:</p>
+
+<pre><code> CREATE OR REPLACE PROCEDURE example (x IN NUMBER)
+ AS LANGUAGE JAVA
+ NAME 'Example.example(int)';
+</code></pre></li>
+<li><p>Проверка выполнения хранимой процедуры:</p>
+
+<pre><code> SET SERVEROUTPUT ON
+ declare
+    a number := 5;
+ begin
+    example(a);
+ end;
+ /
+</code></pre>
+
+<p> Вывод:</p>
+
+<pre><code> z = 6
+</code></pre></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

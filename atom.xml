@@ -1,0 +1,1039 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[vylgin]]></title>
+  <link href="http://blog.vylgin.pro/atom.xml" rel="self"/>
+  <link href="http://blog.vylgin.pro/"/>
+  <updated>2014-03-25T16:55:51-04:00</updated>
+  <id>http://blog.vylgin.pro/</id>
+  <author>
+    <name><![CDATA[Виталий Вылгин]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Создание Sliding Menu приложения в Android Studio]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/03/25/sozdaniie-sliding-menu-prilozhieniia-v-android-studio/"/>
+    <updated>2014-03-25T09:27:00-04:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/03/25/sozdaniie-sliding-menu-prilozhieniia-v-android-studio</id>
+    <content type="html"><![CDATA[<p>Рассмотрим пример создания приложения с использованием библиотек <a href="https://github.com/jfeinstein10/SlidingMenu" title="Sliding Menu GitHub">Sliding Menu</a>, <a href="http://actionbarsherlock.com">ActionBarSherlock</a> и среды разработки <a href="http://developer.android.com/sdk/installing/studio.html">Android Studio</a>.</p>
+
+<p>Приложение будет состоять из бокового меню и пары фрагментов:</p>
+
+<p><img src="http://blog.vylgin.pro/images/post_3/Page_1.png" width="300">
+<img src="http://blog.vylgin.pro/images/post_3/Page_2.png" width="300"></p>
+
+<p><img src="http://blog.vylgin.pro/images/post_3/Page_3.png" width="300">
+<img src="http://blog.vylgin.pro/images/post_3/Page_4.png" width="300"></p>
+
+<!-- more -->
+
+
+<p></p>
+
+<h3>Создание проекта в Android Studio</h3>
+
+<p>С созданием проекта не должно возникнуть сложностей, если вы хоть раз использовали IntelliJ IDEA.</p>
+
+<p><img class="center" src="http://blog.vylgin.pro/images/post_3/create_project.png"></p>
+
+<h3>Импортирование Sliding Menu в проект Android Studio.</h3>
+
+<p>Создадим каталог <code>lib</code>, в котором будет хранится библиотека Sliding Menu.</p>
+
+<p><img class="center" src="http://blog.vylgin.pro/images/post_3/add_lib_directory.png"></p>
+
+<p>Заходим на страницу проекта <a href="">https://github.com/jfeinstein10/SlidingMenu</a> и сохраняем каталог <code>library</code> с помощью утилиты git, или скачав архив с исходниками. Переименовываем каталог <code>library</code> в <code>SlidingMenu</code> и копируем в только что созданный каталог <code>lib</code> нашего проекта, должна получиться такая структура проекта:</p>
+
+<p><img class="center" src="http://blog.vylgin.pro/images/post_3/project_structure.png"></p>
+
+<p>Добавляем в файл <code>settings.gradle</code> строку:</p>
+
+<pre><code>include ":lib:SlidingMenu"
+</code></pre>
+
+<p>Добавляем в файл <code>SlidingApplication/app/build.gradle</code> в структуру зависимостей (<code>dependencies</code>) модуля <code>app</code> строку:</p>
+
+<pre><code>compile project(':lib:SlidingMenu')
+</code></pre>
+
+<p>Стоит обратить внимание на то, что в обоих файлах <code>build.gradle</code>, нашего проекта и подключенной библиотеки Sliding Menu, должны совпадать значения у <code>compileSdkVersion</code> и <code>buildToolsVersion</code>.</p>
+
+<h4>Проверка работы приложения после подключения библиотеки Sliding Menu.</h4>
+
+<p>Для бокового меню нужно создадим файл разметки <code>sidemenu.xml</code> в каталоге <code>SlidingApplication/app/src/main/res/layout/</code></p>
+
+<pre><code> &lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;ListView android:id="@+id/sidemenu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginRight="50dp"
+    android:divider="@null"
+    android:dividerHeight="0px"
+    android:footerDividersEnabled="false"
+    android:headerDividersEnabled="false"
+    android:choiceMode="singleChoice"
+    xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+&lt;/ListView&gt;
+</code></pre>
+
+<p>Создадим файл разметки для элемента меню <code>sidemenu_item.xml</code> в каталоге <code>SlidingApplication/app/src/main/res/layout/</code></p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="0dp"
+    android:orientation="vertical"
+    android:padding="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+
+    &lt;TextView android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="TextView"/&gt;
+
+&lt;/LinearLayout&gt;
+</code></pre>
+
+<p>Добавим в файл <code>dimens.xml</code> значения ширины бокового меню в каталоге <code>SlidingApplication/app/src/main/res/values</code>:</p>
+
+<pre><code>&lt;dimen name="slidingmenu_behind_width"&gt;200dp&lt;/dimen&gt;
+</code></pre>
+
+<p>Создадим класс <code>MainActivity</code>, унаследованного от <code>ActionBarActivity</code>, и переопределим метод <code>onCreate</code>:</p>
+
+<pre><code>@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    SlidingMenu menu = new SlidingMenu(this);
+    menu.setMode(SlidingMenu.LEFT);
+    menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+    menu.setFadeDegree(0.35f);
+    menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
+    menu.setMenu(R.layout.sidemenu);
+    menu.setBehindWidthRes(R.dimen.slidingmenu_behind_width);
+
+    String[] items = {"Первый фрагмент","Второй фрагмент"};
+    ((ListView) findViewById(R.id.sidemenu)).setAdapter(
+            new ArrayAdapter&lt;Object&gt;(
+                    this,
+                    R.layout.sidemenu_item,
+                    R.id.text,
+                    items
+            )
+    );
+}
+</code></pre>
+
+<p>Теперь можно собрать и запустить приложение. Если провести пальцем слева на право в любой месте окна приложения, то откроется боковое меню с двумя пунктами.</p>
+
+<h3>Импортирование ActionBarSherlock в проект Android Studio.</h3>
+
+<p>Импортировать ActionBarSherlock очень просто, достаточно в файл <code>SlidingApplication/app/build.gradle</code> в структуру зависимостей (<code>dependencies</code>) модуля app добавить строки:</p>
+
+<pre><code>compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+compile 'com.android.support:support-v4:19.0.0'
+</code></pre>
+
+<p>И удалить строку:</p>
+
+<pre><code>compile 'com.android.support:appcompat-v7:+'
+</code></pre>
+
+<p>Должно получиться так:</p>
+
+<pre><code>dependencies {
+    compile 'com.android.support:support-v4:19.0.0'
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile project(':lib:SlidingMenu')
+}
+</code></pre>
+
+<p>Нужно заменить тему приложения в файле <code>style.xml</code> в каталоге <code>SlidingApplication/app/src/main/res/values</code> на тему шерлока:</p>
+
+<pre><code>&lt;style name="AppTheme" parent="Theme.Sherlock.Light"&gt;
+</code></pre>
+
+<p>Удаляем каталог <code>menu</code> в <code>SlidingApplication/app/src/main/res/</code></p>
+
+<p>Изменим родительский класс нашего <code>MainActivity</code> на <code>SherlockFragmentActivity</code></p>
+
+<pre><code>public class MainActivity extends SherlockFragmentActivity
+</code></pre>
+
+<p>Собираем и запускаем приложение. Если оно работает, то мы успешно импортировали библиотеку ActionBarSherlock.</p>
+
+<h3>Создание фрагментов приложения</h3>
+
+<p>Добавим строковый ресурс в <code>strings.xml</code> каталога <code>SlidingApplication/app/src/main/res/values</code>:</p>
+
+<pre><code>&lt;string name="callmenu"&gt;&lt;![CDATA[&lt;- ВЫЗОВ МЕНЮ!]]&gt;&lt;/string&gt;
+</code></pre>
+
+<p>Создадим два java класса фрагментов <code>FirstFragment</code> и <code>SecondFragment</code>, унаследованных от класса <code>SherlockFragment</code>.</p>
+
+<h4><code>FirstFragment</code></h4>
+
+<p>Первый фрагмент будет отображать изображение и текст.</p>
+
+<p>Создадим файл разметки для фрагмента <code>fragment_first.xml</code> в каталоге <code>SlidingApplication/app/src/main/res/layout/</code></p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"&gt;
+
+    &lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"&gt;
+
+        &lt;ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_launcher"/&gt;
+
+        &lt;TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/large_text"/&gt;
+
+    &lt;/LinearLayout&gt;
+
+&lt;/ScrollView&gt;
+</code></pre>
+
+<p>Добавим строковый ресурс в <code>strings.xml</code> каталога <code>SlidingApplication/app/src/main/res/values</code>:</p>
+
+<pre><code>&lt;string name="large_text"&gt;Некоторый очень длинный текст&lt;/string&gt;
+</code></pre>
+
+<p>Добавим в класс <code>FirstFragment</code> код:</p>
+
+<pre><code>public class FirstFragment extends SherlockFragment {
+    private ActionBar actionBar;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_first, container, false);
+
+        actionBar = getSherlockActivity().getSupportActionBar();
+        actionBar.removeAllTabs();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setTitle(getString(R.string.first_fragment_name));
+
+        return view;
+    }  
+}
+</code></pre>
+
+<p>Добавим обработчик событий на пункты меню в классе <code>MainActivity</code>:</p>
+
+<pre><code>((ListView) findViewById(R.id.sidemenu)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @Override
+    public void onItemClick(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+        changeFragment(position);
+    }
+});
+</code></pre>
+
+<p>А также метод смены фрагмента:</p>
+
+<pre><code>private void changeFragment(int position) {
+    switch (position) {
+        case 0:
+            showFragment(new FirstFragment());
+            break;
+    }
+}
+</code></pre>
+
+<p>И метод для отображения нового фрагмента:</p>
+
+<pre><code>private void showFragment(Fragment currentFragment) {
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    fragmentManager.beginTransaction()
+            .replace(R.id.container, currentFragment)
+            .commit();
+}
+</code></pre>
+
+<p>Собираем проект, запускаем приложение, открываем меню и нажимаем на первый пункт, радуемся появившемуся фрагменту. Только есть минус, надо вручную закрыть меню сдвигом появившегося фрагмента, но это мы исправим в дальнейшем.</p>
+
+<h4><code>SecondFragment</code></h4>
+
+<p>Второй фрагмент будет отображать табы, при смене которых будет меняться цвет фона.</p>
+
+<p>Создадим файл разметки для фрагмента отображающего табы <code>fragment_second.xml</code> в каталоге <code>SlidingApplication/app/src/main/res/layout/</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"&gt;
+
+    &lt;android.support.v4.view.ViewPager
+        android:id="@+id/pager_color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" &gt;
+    &lt;/android.support.v4.view.ViewPager&gt;
+
+&lt;/RelativeLayout&gt;
+</code></pre>
+
+<p>Создадим файл разметки для фрагмента выбранного таба <code>fragment_second_color</code> в каталоге <code>SlidingApplication/app/src/main/res/layout/</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"&gt;
+
+    &lt;ImageView
+        android:id="@+id/imageView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"/&gt;
+&lt;/LinearLayout&gt;
+</code></pre>
+
+<p>Создадим класс для второго фрагмента, отображающего табы:</p>
+
+<pre><code>public class SecondFragment extends SherlockFragment {
+    private ActionBar actionBar;
+    private ViewPager pager;
+    private ActionBar.Tab tab;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_second, container, false);
+
+        actionBar = getSherlockActivity().getSupportActionBar();
+        actionBar.removeAllTabs();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setTitle(getString(R.string.second_fragment_name));
+
+        ViewPager.SimpleOnPageChangeListener ViewPagerListener = new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                actionBar.setSelectedNavigationItem(position);
+            }
+        };
+
+        pager = (ViewPager) view.findViewById(R.id.pager_color);
+        pager.setOnPageChangeListener(ViewPagerListener);
+
+        FragmentManager fm = getChildFragmentManager();
+        ViewPagerColorAdapter viewPagerScheduleAdapter = new ViewPagerColorAdapter(fm);
+        pager.setAdapter(viewPagerScheduleAdapter);
+
+        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+
+            @Override
+            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+                pager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) { }
+
+            @Override
+            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) { }
+        };
+
+        tab = actionBar.newTab().setText("КРАСНЫЙ").setTabListener(tabListener);
+        actionBar.addTab(tab);
+
+        tab = actionBar.newTab().setText("ЗЕЛЕНЫЙ").setTabListener(tabListener);
+        actionBar.addTab(tab);
+
+        tab = actionBar.newTab().setText("СИНИЙ").setTabListener(tabListener);
+        actionBar.addTab(tab);
+
+        return view;
+    }
+}
+</code></pre>
+
+<p>Создадим класс адаптера <code>ViewPagerColorAdapter</code>, унаследованного от класса <code>FragmentPagerAdapter</code>:</p>
+
+<pre><code>public class ViewPagerColorAdapter extends FragmentPagerAdapter {
+    final int PAGE_COUNT = 3;
+
+    public ViewPagerColorAdapter(FragmentManager fm) {
+        super(fm);
+    }
+
+    @Override
+    public Fragment getItem(int arg0) {
+        switch (arg0) {
+            case 0:
+                return new FragmentTabColor(Color.RED);
+            case 1:
+                return new FragmentTabColor(Color.GREEN);
+            case 2:
+                return new FragmentTabColor(Color.BLUE);
+        }
+
+        return null;
+    }
+
+    @Override
+    public int getCount() {
+        return PAGE_COUNT;
+    }
+}
+</code></pre>
+
+<p>Создадим класс фрагмента для отображения цветного прямоугольника <code>FragmentTabColor</code>:</p>
+
+<pre><code>public class FragmentTabColor extends SherlockFragment {
+
+    private int color;
+
+    public FragmentTabColor(int color) {
+        this.color = color;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_second_color, container, false);
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+        imageView.setBackgroundColor(color);
+
+        return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        setUserVisibleHint(true);
+    }
+}
+</code></pre>
+
+<p>В метод <code>changeFragment(int position)</code> класса <code>MainActivity</code>, в конструкцию <code>switch</code>, добавим <code>case</code> для отображения второго фрагмента:</p>
+
+<pre><code>private void changeFragment(int position) {
+    switch (position) {
+        case 0:
+            showFragment(new FirstFragment());
+            break;
+        case 1:
+            showFragment(new SecondFragment());
+            break;
+
+    }
+}
+</code></pre>
+
+<p>На этом этапе можно собрать и запустить приложение. При перемещении пальцем на следующий таб, стоящий справа от текущего, приложение ведет себя корректно, но если переместиться на таб, стоящий левее &ndash; то откроется меню приложения. Чтобы добиться правильного поведения приложения на жесты пользователя, выполним действия.</p>
+
+<p>Добавим в класс <code>MainActivity</code> приватное поле:</p>
+
+<pre><code>private SlidingMenu menu;
+</code></pre>
+
+<p>В конце метода <code>onCreate</code> проинициализируем его:</p>
+
+<pre><code>this.menu = menu;
+</code></pre>
+
+<p>Также добавим геттер:</p>
+
+<pre><code>public SlidingMenu getMenu() {
+    return menu;
+}
+</code></pre>
+
+<p>Добавим в обработчик <code>onTabSelected</code> фрагмента <code>SecondFragment</code> следующий код, который позволяет комфортно переключаться между табами:</p>
+
+<pre><code>SherlockFragmentActivity sherlockFragmentActivity = getSherlockActivity();
+    if (sherlockFragmentActivity != null) {
+        SlidingMenu slidingMenu = ((MainActivity) sherlockFragmentActivity).getMenu();
+        if (tab.getPosition() == 0) {
+            slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        } else {
+            slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        }
+}
+</code></pre>
+
+<p>Собираем приложение и проверяем работу созданного фрагмента.</p>
+
+<h3>Доработка меню приложения</h3>
+
+<h4>Изменение поведения меню</h4>
+
+<p>Добавим возможность открытия меню, нажатием на иконку приложения, для этого в метод <code>onCreate</code> класса <code>MainActivity</code> добавим строки:</p>
+
+<pre><code>getSupportActionBar().setHomeButtonEnabled(true);
+getSupportActionBar().setDisplayShowCustomEnabled(true);
+getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+</code></pre>
+
+<p>И в этот же класс добавим два метода:</p>
+
+<pre><code>@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+        case android.R.id.home:
+            menuToggle();
+            return true;
+    }
+    return super.onOptionsItemSelected(item);
+}
+
+public void menuToggle(){
+    if(menu.isMenuShowing())
+        menu.showContent();
+    else
+        menu.showMenu();
+}
+</code></pre>
+
+<p>Для того, чтобы после выбора фрагмента закрывалось меню, добавим в обработчик <code>onItemClick</code>, находящегося в методе <code>onCreate</code> класса <code>MainActivity</code>, вызов метода <code>menuToggle()</code>:</p>
+
+<pre><code>((ListView) findViewById(R.id.sidemenu)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @Override
+    public void onItemClick(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+        menuToggle();
+        changeFragment(position);
+    }
+});
+</code></pre>
+
+<p>Приложение можно собрать и убедиться, что при нажатии на логотип, открывается меню, а при выборе фрагмента &ndash; меню закрывается.</p>
+
+<p>Для того, чтобы меню закрывалось при нажатии на аппаратную кнопку &ldquo;назад&rdquo;, можно добавить следующие строки в класс <code>MainActivity</code>:</p>
+
+<pre><code>@Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if(menu.isMenuShowing()){
+            menu.toggle(true);
+            return false;
+        }
+    }
+    return super.onKeyDown(keyCode, event);
+}
+</code></pre>
+
+<h4>Изменение внешнего вида меню и выделение выбранного пункта.</h4>
+
+<p>Первым делом &ndash; добавим фон меню и стиль пунктов в метод <code>onCreate</code> класса <code>MainActivity</code>:</p>
+
+<pre><code>menu.setBackgroundColor(0xFF333333);
+menu.setSelectorDrawable(R.drawable.sidemenu_items_background);
+</code></pre>
+
+<p>Создадим файл <code>sidemenu_items_background</code>, описывающий поведение пункта меню на действия пользователя, в каталоге <code>SlidingApplication/app/src/main/res/drawable/</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;selector xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+    &lt;item android:state_pressed="true" android:drawable="@drawable/sidemenu_item_background_pressed"/&gt;
+    &lt;item android:state_focused="true" android:drawable="@drawable/sidemenu_item_background_focuded"/&gt;
+    &lt;item android:state_activated="true" android:drawable="@drawable/sidemenu_item_background_focuded"/&gt;
+    &lt;item android:drawable="@drawable/sidemenu_item_background"/&gt;
+&lt;/selector&gt;
+</code></pre>
+
+<p>Следует внести изменения в файл <code>sidemenu_item.xml</code>, чтобы пункты меню стали показываться в выбранной разметке:</p>
+
+<ul>
+<li><p>В LinearLayout добавить</p>
+
+<pre><code>  android:background="@drawable/sidemenu_items_background"
+</code></pre></li>
+<li><p>В TextView добавить</p>
+
+<pre><code>  android:textColor="#fff"
+</code></pre></li>
+</ul>
+
+
+<p>Создадим файл <code>sidemenu_item_background</code>, описывающий внешний вид пункта меню, в каталоге <code>res/drawable</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;layer-list xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+
+    &lt;item android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="1dp" &gt;
+        &lt;shape android:shape="rectangle"&gt;
+            &lt;solid android:color="#404040"/&gt;
+        &lt;/shape&gt;
+    &lt;/item&gt;
+
+    &lt;item android:left="0dp" android:top="1dp" android:right="0dp" android:bottom="0dp" &gt;
+        &lt;shape android:shape="rectangle"&gt;
+            &lt;solid android:color="#1A1A1A"/&gt;
+        &lt;/shape&gt;
+    &lt;/item&gt;
+
+    &lt;item android:left="0dp" android:top="1dp" android:right="0dp" android:bottom="1dp" &gt;
+        &lt;shape android:shape="rectangle"&gt;
+            &lt;solid  android:color="#333"/&gt;
+        &lt;/shape&gt;
+    &lt;/item&gt;
+
+&lt;/layer-list&gt;
+</code></pre>
+
+<p>Создадим файл <code>sidemenu_item_background_pressed</code>, описывающий внешний вид пункта меню в момент нажатия, в каталоге <code>res/drawable</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;layer-list xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+    &lt;item&gt;
+        &lt;shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"&gt;
+            &lt;solid android:color="@color/menu_focused_pressed_gray_color"/&gt;
+        &lt;/shape&gt;
+    &lt;/item&gt;
+&lt;/layer-list&gt;
+</code></pre>
+
+<p>Создадим файл <code>sidemenu_item_background_focuded</code>, описывающий внешний вид пункта меню в момент нахождения в фокусе, в каталоге <code>res/drawable</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;layer-list xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+
+    &lt;item&gt;
+        &lt;shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"&gt;
+            &lt;solid android:color="@color/blue_dark_color"/&gt;
+        &lt;/shape&gt;
+    &lt;/item&gt;
+
+    &lt;item android:left="10dp" android:top="0dp" android:right="0dp" android:bottom="0dp" &gt;
+        &lt;shape android:shape="rectangle"&gt;
+            &lt;solid android:color="@color/menu_focused_pressed_gray_color"/&gt;
+        &lt;/shape&gt;
+    &lt;/item&gt;
+
+&lt;/layer-list&gt;
+</code></pre>
+
+<p>Осталось создать файл для хранения цветов <code>colors.xml</code> в каталоге <code>res/values</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;resources&gt;
+    &lt;color name="menu_focused_pressed_gray_color"&gt;#404040&lt;/color&gt;
+    &lt;color name="blue_dark_color"&gt;#3280b8&lt;/color&gt;
+&lt;/resources&gt;
+</code></pre>
+
+<p>Привычным способом собираем и проверяем работу приложения. Должно получиться так:</p>
+
+<p><img src="http://blog.vylgin.pro/images/post_3/scr_1.png" width="250">
+<img src="http://blog.vylgin.pro/images/post_3/scr_2.png" width="250">
+<img src="http://blog.vylgin.pro/images/post_3/scr_3.png" width="250"></p>
+
+<h3>Страница проекта на github</h3>
+
+<p>С полным исходным кодом приложения можно ознакомиться на странице проекта <a href="https://github.com/vylgin/SlidingApplication">https://github.com/vylgin/SlidingApplication</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Oracle Database и хранимые процедуры на языке Java]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/02/03/oracle-database-i-khranimyie-protsiedury-na-iazykie-java/"/>
+    <updated>2014-02-03T14:19:47-05:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/02/03/oracle-database-i-khranimyie-protsiedury-na-iazykie-java</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://blog.vylgin.pro/images/post_2/java_oracle_logo.jpg">
+В БД Oracle можно использовать хранимые процедуры и хранимые функции на языке Java благодаря встроенной JVM. С помощью них можно выполнять те задачи, с которыми не справляется PL/SQL, например, если необходимо обеспечить взаимодействие с операционной системой.</p>
+
+<p>Для создания хранимой процедуры нужно выполнить три действия:</p>
+
+<ol>
+<li>Создать исходный код с хранимой процедурой на языке Java.</li>
+<li>Загрузить скомпилированный код в Oracle.</li>
+<li>Создать псевдоним хранимой процедуры на PL/SQL.</li>
+</ol>
+
+
+<p>Рассмотрим каждое из них.</p>
+
+<!-- more -->
+
+
+<h4>1. Создание исходного кода хранимой процедуры на языке Java</h4>
+
+<p>Для создания хранимой процедуры или функции на языке Java, нужно создать класс, в нем определить публичный статический метод, от возвращаемого значения которого зависит будет ли это метод хранимой процедурой или хранимой функцией.</p>
+
+<p><code>public static void procedure() { }</code> &ndash; хранимая процедура.</p>
+
+<p><code>public static int function() { return -1; }</code> &ndash; хранимая функция.</p>
+
+<p>Для использования IN параметра, нужно в статический метод передать ссылку на объект.</p>
+
+<pre><code>public static void procedure(String str) { }
+</code></pre>
+
+<p>Для использования OUT или IN OUT параметра, нужно передать ссылку на массив.</p>
+
+<pre><code>public static void procedure(String[] str) {}
+</code></pre>
+
+<h4>2. Загрузка скомпилированного кода в Oracle</h4>
+
+<p>Загрузить созданный класс можно с помощью командной строки:</p>
+
+<pre><code>javac Swapper.java
+$ loadjava -user username/password Swapper.class
+</code></pre>
+
+<p>Я использовал Oracle SQL Developer и с помощью него загружал файл с исходным кодом:</p>
+
+<p><img class="center" src="http://blog.vylgin.pro/images/post_2/img_2.png"></p>
+
+<h4>3. Создание псевдонима хранимой процедуры на PL/SQL</h4>
+
+<p>Псевдоним на PL/SQL для Java кода можно создать по шаблону</p>
+
+<pre><code>CREATE OR REPLACE PROCEDURE имя_процедуры (x IN NUMBER, y IN OUT NUMBER)
+AS LANGUAGE JAVA
+NAME 'ИмяКласса.название_метода(int[], int[])';
+</code></pre>
+
+<h3>Пример создания хранимой процедуры.</h3>
+
+<p>Рассмотрим пример хранимой процедуры для обмена значений двух целочисленных переменных.</p>
+
+<ol>
+<li><p>Создадим класс и статический метод для хранимой процедуры:</p>
+
+<pre><code> public class Swapper {
+   public static void swap (int[] x, int[] y) {
+     int tmp = x[0];
+     x[0] = y[0];
+     y[0] = tmp;
+   }
+ }
+</code></pre></li>
+<li><p>Скомпилируем и загрузим класс в Oracle Database:</p>
+
+<pre><code> javac Swapper.java
+ $ loadjava -user username/password Swapper.class
+</code></pre></li>
+<li><p>Создадим псевдоним хранимой процедуры на PS/SQL:</p>
+
+<pre><code> CREATE OR REPLACE PROCEDURE swap (x IN OUT NUMBER, y IN OUT NUMBER)
+ AS LANGUAGE JAVA
+ NAME 'Swapper.swap(int[], int[])';
+</code></pre></li>
+<li><p>Проверим работу созданной процедуры:</p>
+
+<pre><code> SET SERVEROUTPUT ON
+ declare
+    a number := 5;
+    b number := 3;
+ begin
+    swap(a, b);
+    dbms_output.put_line(a || ' ' || b);
+ end;
+ /
+</code></pre>
+
+<p> Убедимся, что на выводе отобразилось <code>3 5</code>.</p></li>
+</ol>
+
+
+<h3>Вывод отладочной информации в dbms</h3>
+
+<p>Вывод отладочной информации с использованием <code>System.out.println("Отладочное сообщение")</code> не работает в хранимых процедурах, нужно подключиться к dbms текущего коннекта, для этого можно написать собственный метод:</p>
+
+<pre><code>private static void log(String s) {
+    try {
+        PreparedStatement ps = new OracleDriver()
+                    .defaultConnection()
+                    .prepareStatement("begin dbms_output.put_line(:x); end;");
+        ps.setString(1, s);
+        ps.execute();
+        ps.close();
+    } catch (SQLException e) {
+        // Обработка исключения
+    }
+}
+</code></pre>
+
+<h4>Пример хранимой процедуры с выводом отладочной информации</h4>
+
+<ol>
+<li><p>Создание Java-кода:</p>
+
+<pre><code> import java.sql.*;
+ import oracle.jdbc.*;
+
+ public class Example {
+
+     public static void example (int x) {
+         int z = x + 1;
+         log("z = " + z);
+     }
+
+     private static void log(String s) {
+         try {
+             PreparedStatement ps = new OracleDriver()
+                         .defaultConnection()
+                         .prepareStatement("begin dbms_output.put_line(:x); end;");
+             ps.setString(1, s);
+             ps.execute();
+             ps.close();
+         } catch (SQLException e) {
+             // Обработка исключения
+         }
+     }
+ }
+</code></pre></li>
+<li><p>Компилирование и загрузка Java-кода в Oracle Database:</p>
+
+<pre><code> javac Example.java
+ $ loadjava -user username/password Example.class
+</code></pre></li>
+<li><p>Создание псевдонима хранимой процедуры на PL/SQL:</p>
+
+<pre><code> CREATE OR REPLACE PROCEDURE example (x IN NUMBER)
+ AS LANGUAGE JAVA
+ NAME 'Example.example(int)';
+</code></pre></li>
+<li><p>Проверка выполнения хранимой процедуры:</p>
+
+<pre><code> SET SERVEROUTPUT ON
+ declare
+    a number := 5;
+ begin
+    example(a);
+ end;
+ /
+</code></pre>
+
+<p> Вывод:</p>
+
+<pre><code> z = 6
+</code></pre></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Создание блога на Github с помощью Octopress]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch%27iu-octopress/"/>
+    <updated>2014-01-09T06:13:50-05:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/01/09/sozdaniie-blogha-na-github-s-pomoshch&#8217;iu-octopress</id>
+    <content type="html"><![CDATA[<p>Octopress — это фреймворк, позволяющий генерировать статические HTML сайты с помощью Jekyll. Каждый, кто начинает вести свой блог на нем, пишет подобную статью, это уже стало традицией, поэтому я опущу то, как установить ruby, rvm, завести акканут на гитхабе, настроить ssh-ключи и т.д., а акцентирую внимание на более интересных деталях.</p>
+
+<!-- more -->
+
+
+<h3>Цель</h3>
+
+<p>Моя цель &ndash; создать собственный блог с минимальными временными и материальными вложениями на своем домене (<a href="http://blog.vylgin.pro">http://blog.vylgin.pro</a>). Можно завести блог бесплатно, но он будет доступен по адресу <a href="http://username.github.io,">http://username.github.io,</a> где <em>username</em> &ndash; это имя пользователя на гитхабе.</p>
+
+<h3>Установка Octopress+GitHub Pages</h3>
+
+<p>Первым делом необходимо установить сам octopress, клонировав репозиторий в каталог, где будут находиться исходные файлы:</p>
+
+<pre><code>git clone git://github.com/imathis/octopress.git octopress
+cd octopress
+bundle install
+</code></pre>
+
+<p>В этот момент возникла ошибка о том, что не установлен пакет fast-stemmer версии 1.0.1, в описании ошибки было указано, как установить необходимую версию.</p>
+
+<pre><code>sudo gem install fast-stemmer -v '1.0.1'
+bundle install
+</code></pre>
+
+<p>Если ошибки не было, то выполняем следующие команды:</p>
+
+<pre><code>rake install
+rake setup_github_pages
+</code></pre>
+
+<p>В этом моменте надо будет указать адрес репозитория на github, например: git@github.com:<em>username</em>/<em>username</em>.github.io.git</p>
+
+<p>Блог создался, теперь можно сгененировать его из исходников, запустить локально (по-умолчанию он будет доступен по адресу <a href="http://localhost:4000">http://localhost:4000</a>) и задеплоить на гитхаб:</p>
+
+<pre><code>rake generate
+rake preview    
+rake deploy
+</code></pre>
+
+<h3>Привязка собственного домена</h3>
+
+<p>Гитхаб можно считать полноценным хостингом для статических сайтов, привязав собственный домен согласно <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">документации</a>. Для этого нужно:</p>
+
+<ol>
+<li>Создать файл <em>CNAME</em> в каталоге <em>source</em> и записать в него имя домена, по которому будет доступен блог.</li>
+<li>Настроить DNS:
+
+<ul>
+<li>Добавить запись <strong>A</strong> с именем хоста <strong>github.map.fastly.net</strong> и IP-адресом <strong>199.27.76.133</strong></li>
+<li>Добавить запись <strong>CNAME</strong> с именем <strong><em>username</em>.github.io.</strong> и значением <strong>github.map.fastly.net.</strong> (точки в конце обязательны)</li>
+<li>Добавить запись <strong>CNAME</strong> с именем <strong>blog</strong> и значением <strong><em>username</em>.github.io.</strong> (точки в конце обязательны, blog &ndash; имя моего поддомена)</li>
+<li>Пример моих настроек:</li>
+</ul>
+</li>
+</ol>
+
+
+<p><img class="center" src="http://blog.vylgin.pro/images/post_1/img1.png"></p>
+
+<p>Теперь мой блог доступен по адресу <a href="http://blog.vylgin.pro.">http://blog.vylgin.pro.</a></p>
+
+<h3>Настройка Octopress</h3>
+
+<h4>Изменение названия и описание блога</h4>
+
+<p>Для изменения названия и описания можно отредактировать следующие строки в файле _config.yml:</p>
+
+<pre><code>url: http://username.github.io
+title: Название блога
+subtitle: Подзаголовок блога
+author: Имя автора
+simple_search: http://google.com/search
+description: Описание блога
+</code></pre>
+
+<h4>Русификация</h4>
+
+<p>Подробно о русификации octopress описано в <a href="http://zenbro.github.io/blog/2013/09/21/octopress-russification/">этой статье</a>.</p>
+
+<h3>Добавление статей</h3>
+
+<p>Новая статья добавляется командой:</p>
+
+<pre><code>rake new_post["Название новой статьи"]
+</code></pre>
+
+<h4>Превью статьи на главной странице</h4>
+
+<p>Если статья длинная, то можно добавить кнопку &ldquo;Читать дальше&rdquo; после абзаца, для этого нужно изменить строку в файле _config.yml, указав текст кнопки:</p>
+
+<pre><code>excerpt_link: "Читать дальше &amp;rarr;" 
+</code></pre>
+
+<p>В файле статьи, после абзаца нужно добавить строку:</p>
+
+<pre><code>&lt;!-- more --&gt;
+</code></pre>
+
+<h3>Сохранение исходных файлов на github</h3>
+
+<p>Удобно хранить на гитхабе не только сгенерированный статический сайт, но и исходные фалы статей и настроек, чтобы иметь возможность редактировать блог на других компьютерах, да и просто иметь бэкап на всякий случай.
+Нужно закоммитить изменения, с добавлением новых файлов (ключ -a) и отправить изменения в центральный репозиторий:</p>
+
+<pre><code>git commit -a
+git push origin source
+</code></pre>
+
+<h3>Продолжение редактирования блога с другого компьютера</h3>
+
+<p>После того, как все исходные файлы блога стали храниться на гитхабе, можно клонировать репозиторий на другой компьютер, для этого достаточно выполнить:</p>
+
+<pre><code>git clone git@github.com:*username*/*username*.github.io.git
+</code></pre>
+
+<p>Если нет доступа к гитхабу по ssh:</p>
+
+<pre><code>git clone https://github.com/*username*/*username*.github.io.git
+</code></pre>
+
+<p>Мы находимся в ветке <em>master</em>, в которой содержатся сгенерированные файлы блога, чтобы иметь возможность редактировать, необходимо переключиться в ветку <em>source</em>:</p>
+
+<pre><code>git checkout source
+</code></pre>
+
+<p>Нужно привязать локальный репозиторий к центральному на гитхабе, для этого нужно выполнить команду, указав адрес репозитория (git@github.com:<em>username</em>/<em>username</em>.github.io.git):</p>
+
+<pre><code>rake setup_github_pages
+</code></pre>
+
+<p>Теперь можно можно обновлять блог командой:</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>В этот момент может возникнуть ошибка:</p>
+
+<pre><code>Pushing generated _deploy website
+To git@github.com:vylgin/vylgin.github.io.git
+ ! [rejected]        master -&gt; master (non-fast-forward)
+error: failed to push some refs to 'git@github.com:vylgin/vylgin.github.io.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Merge the remote changes (e.g. 'git pull')
+hint: before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+</code></pre>
+
+<p>Она возникает из-за того, что отличаются файлы в ветке центральной ветке <em>master</em> и локальном каталоге <em>_deploy</em>. Для исправления нужно перейти в каталог <em>_deploy</em>:</p>
+
+<pre><code>cd _deploy
+</code></pre>
+
+<p>Забрать и слить удаленную ветку <em>master</em> с локальной:</p>
+
+<pre><code>git pull origin master
+</code></pre>
+
+<p>Теперь нужно разрешить конфликты, в интернете полно информации, как это сделать, лично я использовал программу git-cola и meld. После того, как конфликты разрешены, можно сделать коммит и отправить изменения в центральный репозиторий:</p>
+
+<pre><code>git commit -m "Исправлены конфликты"
+git push origin master
+</code></pre>
+
+<p>Конфликты разрешены, можно перейти в каталог с блогом:</p>
+
+<pre><code>cd ..
+</code></pre>
+
+<p>И воспользоваться командой:</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>После внесения изменений нужно не забыть сделать коммит и залить изменения на гитхаб:</p>
+
+<pre><code>git commit -a
+git push origin source
+</code></pre>
+
+<h3>Возможные ошибки</h3>
+
+<p>У меня возникли проблемы с rake, при вызове команд появлялась ошибка:</p>
+
+<pre><code>/usr/local/bin/rake:23:in `load': cannot load such file -- /usr/share/rubygems-integration/1.9.1/gems/rake-10.0.4/bin/rake (LoadError)
+    from /usr/local/bin/rake:23:in `&lt;main&gt;'
+</code></pre>
+
+<p>Быстрым решением является вызов команды:</p>
+
+<pre><code>bundle exec rake имя_команды
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>
