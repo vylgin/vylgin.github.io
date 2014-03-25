@@ -6,7 +6,7 @@ comments: true
 categories: [oracle, java]
 ---
 
-{% img left https://cloclo1.cloud.mail.ru/thumb/xw1/blog/images/post_2/java_oracle_logo.jpg %}
+{% img left /images/post_2/java_oracle_logo.jpg %}
 В БД Oracle можно использовать хранимые процедуры и хранимые функции на языке Java благодаря встроенной JVM. С помощью них можно выполнять те задачи, с которыми не справляется PL/SQL, например, если необходимо обеспечить взаимодействие с операционной системой.
 
 Для создания хранимой процедуры нужно выполнить три действия:
@@ -43,7 +43,7 @@ categories: [oracle, java]
 
 Я использовал Oracle SQL Developer и с помощью него загружал файл с исходным кодом:
 
-{% img center https://cloclo9.datacloudmail.ru/view//blog/images/post_2/img_2.png %}
+{% img center /images/post_2/img_2.png %}
 
 #### 3. Создание псевдонима хранимой процедуры на PL/SQL 
 

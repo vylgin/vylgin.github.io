@@ -41,7 +41,7 @@ Octopress — это фреймворк, позволяющий генериро
     * Добавить запись **CNAME** с именем **blog** и значением ***username*.github.io.** (точки в конце обязательны, blog - имя моего поддомена)
     * Пример моих настроек:
 
-{% img center https://cloclo1.datacloudmail.ru/weblink/view/7c38a7b367de/blog/images/post_1/img1.png %}
+{% img center /images/post_1/img1.png %}
 
 Теперь мой блог доступен по адресу http://blog.vylgin.pro.
 	
