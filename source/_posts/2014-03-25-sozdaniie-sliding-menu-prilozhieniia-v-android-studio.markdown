@@ -30,7 +30,7 @@ categories: [android, slidingmenu, actionbarsherlock]
 
 {% img center /images/post_3/add_lib_directory.png %}
 
-Заходим на страницу проекта [https://github.com/jfeinstein10/SlidingMenu]() и сохраняем каталог `library` с помощью утилиты git, или скачав архив с исходниками. Переименовываем каталог `library` в `SlidingMenu` и копируем в только что созданный каталог `lib` нашего проекта, должна получиться такая структура проекта:
+Заходим на страницу проекта [https://github.com/jfeinstein10/SlidingMenu]() и сохраняем каталог `library` с помощью утилиты git, или скачав архив с исходниками. Переименовываем каталог `library` в `SlidingMenu` и копируем в только что созданный каталог `lib` нашего проекта, должна получиться такая структура:
 
 {% img center /images/post_3/project_structure.png %}
 
@@ -38,7 +38,7 @@ categories: [android, slidingmenu, actionbarsherlock]
 
 	include ":lib:SlidingMenu"
 
-Добавляем в файл `SlidingApplication/app/build.gradle` в структуру зависимостей (`dependencies`) модуля `app` строку:
+Добавляем в файл `SlidingApplication/app/build.gradle`, в структуру зависимостей (`dependencies`) модуля `app`, строку:
 
 	compile project(':lib:SlidingMenu')
 
@@ -46,7 +46,7 @@ categories: [android, slidingmenu, actionbarsherlock]
 
 #### Проверка работы приложения после подключения библиотеки Sliding Menu.
 
-Для бокового меню нужно создадим файл разметки `sidemenu.xml` в каталоге `SlidingApplication/app/src/main/res/layout/` 
+Для бокового меню создадим файл разметки `sidemenu.xml` в каталоге `SlidingApplication/app/src/main/res/layout/` 
 
 	 <?xml version="1.0" encoding="utf-8"?>
 	
@@ -114,7 +114,7 @@ categories: [android, slidingmenu, actionbarsherlock]
 
 ### Импортирование ActionBarSherlock в проект Android Studio.
 
-Импортировать ActionBarSherlock очень просто, достаточно в файл `SlidingApplication/app/build.gradle` в структуру зависимостей (`dependencies`) модуля app добавить строки:
+Импортировать ActionBarSherlock очень просто, достаточно в файл `SlidingApplication/app/build.gradle`, в структуру зависимостей (`dependencies`) модуля app, добавить строки:
 
 	compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 	compile 'com.android.support:support-v4:19.0.0'
