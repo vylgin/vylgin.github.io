@@ -4,7 +4,7 @@
   <title><![CDATA[vylgin]]></title>
   <link href="http://blog.vylgin.pro/atom.xml" rel="self"/>
   <link href="http://blog.vylgin.pro/"/>
-  <updated>2014-03-25T17:38:25-04:00</updated>
+  <updated>2014-03-26T01:52:21-04:00</updated>
   <id>http://blog.vylgin.pro/</id>
   <author>
     <name><![CDATA[Виталий Вылгин]]></name>
@@ -45,7 +45,7 @@
 
 <p><img class="center" src="http://blog.vylgin.pro/images/post_3/add_lib_directory.png"></p>
 
-<p>Заходим на страницу проекта <a href="">https://github.com/jfeinstein10/SlidingMenu</a> и сохраняем каталог <code>library</code> с помощью утилиты git, или скачав архив с исходниками. Переименовываем каталог <code>library</code> в <code>SlidingMenu</code> и копируем в только что созданный каталог <code>lib</code> нашего проекта, должна получиться такая структура проекта:</p>
+<p>Заходим на страницу проекта <a href="">https://github.com/jfeinstein10/SlidingMenu</a> и сохраняем каталог <code>library</code> с помощью утилиты git, или скачав архив с исходниками. Переименовываем каталог <code>library</code> в <code>SlidingMenu</code> и копируем в только что созданный каталог <code>lib</code> нашего проекта, должна получиться такая структура:</p>
 
 <p><img class="center" src="http://blog.vylgin.pro/images/post_3/project_structure.png"></p>
 
@@ -54,7 +54,7 @@
 <pre><code>include ":lib:SlidingMenu"
 </code></pre>
 
-<p>Добавляем в файл <code>SlidingApplication/app/build.gradle</code> в структуру зависимостей (<code>dependencies</code>) модуля <code>app</code> строку:</p>
+<p>Добавляем в файл <code>SlidingApplication/app/build.gradle</code>, в структуру зависимостей (<code>dependencies</code>) модуля <code>app</code>, строку:</p>
 
 <pre><code>compile project(':lib:SlidingMenu')
 </code></pre>
@@ -63,7 +63,7 @@
 
 <h4>Проверка работы приложения после подключения библиотеки Sliding Menu.</h4>
 
-<p>Для бокового меню нужно создадим файл разметки <code>sidemenu.xml</code> в каталоге <code>SlidingApplication/app/src/main/res/layout/</code></p>
+<p>Для бокового меню создадим файл разметки <code>sidemenu.xml</code> в каталоге <code>SlidingApplication/app/src/main/res/layout/</code></p>
 
 <pre><code> &lt;?xml version="1.0" encoding="utf-8"?&gt;
 
@@ -135,7 +135,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
 <h3>Импортирование ActionBarSherlock в проект Android Studio.</h3>
 
-<p>Импортировать ActionBarSherlock очень просто, достаточно в файл <code>SlidingApplication/app/build.gradle</code> в структуру зависимостей (<code>dependencies</code>) модуля app добавить строки:</p>
+<p>Импортировать ActionBarSherlock очень просто, достаточно в файл <code>SlidingApplication/app/build.gradle</code>, в структуру зависимостей (<code>dependencies</code>) модуля app, добавить строки:</p>
 
 <pre><code>compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 compile 'com.android.support:support-v4:19.0.0'
