@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Категория: Android - vylgin</title>
+  <title>Как я импортировал CSV в MongoDB - vylgin</title>
   <meta name="author" content="Виталий Вылгин">
 
   
-  <meta name="description" content="Category: android">
+  <meta name="description" content="Один мой хороший друг дал мне телефонный справочник одного района в виде дампа базы MySQL. &ldquo;Это хорошая возможность познакомиться с MongoDB& &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.vylgin.problog/categories/android">
+  <link rel="canonical" href="http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="vylgin" type="application/atom+xml">
@@ -76,35 +76,215 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Категория: Android</h1>
+    
+      <h1 class="entry-title">Как я импортировал CSV в MongoDB</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-17T04:03:03-04:00" pubdate data-updated="true">Вторник, 17 Июня 2014</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>Один мой хороший друг дал мне телефонный справочник одного района в виде дампа базы MySQL. &ldquo;Это хорошая возможность познакомиться с MongoDB&rdquo; &ndash; подумал я.</p>
 
-  
-  <h2>2014</h2>
+<p>Ниже я расскажу о том, как экспортировал данные из дампа MySQL в MongoDB через промежуточный CSV файл.</p>
 
-<article>
-  
-<h1><a href="/blog/2014/03/25/sozdaniie-sliding-menu-prilozhieniia-v-android-studio/">Создание Sliding Menu приложения в Android Studio</a></h1>
-<time datetime="2014-03-25T09:27:00-04:00" pubdate><span class='day'>25</span> <span class='month'>Мар</span> <span class='year'>2014</span></time>
+<!-- more -->
 
-<footer>
-  <span class="categories">Опубликовано в <a class='category' href='/blog/categories/actionbarsherlock/'>actionbarsherlock</a>, <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/slidingmenu/'>slidingmenu</a></span>
-</footer>
 
-</article>
+<p>Я развернул mysql-сервер, залил в него дамп справочника и сделал экспорт данных в CSV файл. О том как это сделать полно информации, так что подробно описывать не буду, в силу зрелости MySQL.</p>
 
+<h4>1. Установка MongoDB на ubuntu 14.04</h4>
+
+<p>Процесс установки MongoDB &ndash; это выполнение четырех команд из <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/">официального туториала</a>:</p>
+
+<ol>
+<li><p>Импортирование публичного ключа</p>
+
+<pre><code> sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+</code></pre></li>
+<li><p>Создание файла mongodb.list</p>
+
+<pre><code> echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+</code></pre></li>
+<li><p>Обновление локальных пакетов</p>
+
+<pre><code> sudo apt-get update
+</code></pre></li>
+<li><p>Установка последней стабильной версии MongoDB</p>
+
+<pre><code> sudo apt-get install mongodb-org
+</code></pre></li>
+</ol>
+
+
+<p>Теперь мы можем запускать, останавливать и перезапускать нашу базу командами:</p>
+
+<pre><code>sudo service mongod start
+sudo service mongod stop
+sudo service mongod restart
+</code></pre>
+
+<p>Запустить консольный клиент к базе можно командой <code>mongo</code>.</p>
+
+<h4>2. Добавление админа БД</h4>
+
+<h5>Добавление админа для всей БД</h5>
+
+<p>Для добавления учетных записей используется команда <code>db.createUser()</code>, чтобы создать учетную запись администратора для всех баз нужно выполнить:</p>
+
+<pre><code>use admin
+db.createUser(
+  {
+    user: "siteUserAdmin",
+    pwd: "password",
+    roles:
+    [
+      {
+        role: "userAdminAnyDatabase",
+        db: "admin"
+      }
+    ]
+  }
+)
+</code></pre>
+
+<p>Чтобы включить вход по учетным записям, в конфигурационном файле <code>/etc/mongod.conf</code> нужно раскомментировать строку:</p>
+
+<pre><code>auth = true
+</code></pre>
+
+<p>Для коннекта к базе нужно выполнить команду:</p>
+
+<pre><code>mongo -u siteUserAdmin -p
+</code></pre>
+
+<h5>Добавление админа для локальной базы</h5>
+
+<p>Чтобы создать учетную запись администратора для конкретной базы, нужно выполнить команду <code>db.createUser()</code>:</p>
+
+<pre><code>db.createUser(
+  {
+    user: "db1_admin",
+    pwd: "password",
+    roles:
+    [
+      {
+        role: "userAdmin",
+        db: "db1"
+      }
+    ]
+  }
+)
+</code></pre>
+
+<p>Чтобы админ мог читать и писать из базы, добавим ему соответствующую роль:</p>
+
+<pre><code>db.grantRolesToUser(
+  "db1_admin",
+  [
+    {
+      role: "readWrite", db: "db1"
+    }
+  ]
+)
+</code></pre>
+
+<p>Войти в базу можно командой:</p>
+
+<pre><code>mongo -u db1_admin -p password db1
+</code></pre>
+
+<h5>Импорт CSV файла</h5>
+
+<p>Импортирование выполняется командой <code>mongoimport</code>. Пусть у нас есть файл <code>file.csv</code>, тогда импортировать его в MongoDB можно так:</p>
+
+<pre><code>mongoimport --db db1 --type csv --headerline --file file.csv 
+</code></pre>
+
+<p>Или так, если уже создана учетная запись для базы:</p>
+
+<pre><code>mongoimport --db db1 --type csv --headerline --file file.csv -u db1_admin -p
+</code></pre>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Опубликовал <span class="fn">Виталий Вылгин</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-17T04:03:03-04:00" pubdate data-updated="true">Вторник, 17 Июня 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mongodb/'>mongodb</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb/" data-via="vylgin" data-counturl="http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/03/25/sozdaniie-sliding-menu-prilozhieniia-v-android-studio/" title="Previous Post: Создание Sliding Menu приложения в Android Studio">&laquo; Создание Sliding Menu приложения в Android Studio</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Комментарии</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -201,7 +381,10 @@
       var disqus_shortname = 'vylginblog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb/';
+        var disqus_url = 'http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -4,7 +4,7 @@
   <title><![CDATA[vylgin]]></title>
   <link href="http://blog.vylgin.pro/atom.xml" rel="self"/>
   <link href="http://blog.vylgin.pro/"/>
-  <updated>2014-03-26T01:52:21-04:00</updated>
+  <updated>2014-06-17T09:02:51-04:00</updated>
   <id>http://blog.vylgin.pro/</id>
   <author>
     <name><![CDATA[Виталий Вылгин]]></name>
@@ -12,6 +12,135 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Как я импортировал CSV в MongoDB]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb/"/>
+    <updated>2014-06-17T04:03:03-04:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb</id>
+    <content type="html"><![CDATA[<p>Один мой хороший друг дал мне телефонный справочник одного района в виде дампа базы MySQL. &ldquo;Это хорошая возможность познакомиться с MongoDB&rdquo; &ndash; подумал я.</p>
+
+<p>Ниже я расскажу о том, как экспортировал данные из дампа MySQL в MongoDB через промежуточный CSV файл.</p>
+
+<!-- more -->
+
+
+<p>Я развернул mysql-сервер, залил в него дамп справочника и сделал экспорт данных в CSV файл. О том как это сделать полно информации, так что подробно описывать не буду, в силу зрелости MySQL.</p>
+
+<h4>1. Установка MongoDB на ubuntu 14.04</h4>
+
+<p>Процесс установки MongoDB &ndash; это выполнение четырех команд из <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/">официального туториала</a>:</p>
+
+<ol>
+<li><p>Импортирование публичного ключа</p>
+
+<pre><code> sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+</code></pre></li>
+<li><p>Создание файла mongodb.list</p>
+
+<pre><code> echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+</code></pre></li>
+<li><p>Обновление локальных пакетов</p>
+
+<pre><code> sudo apt-get update
+</code></pre></li>
+<li><p>Установка последней стабильной версии MongoDB</p>
+
+<pre><code> sudo apt-get install mongodb-org
+</code></pre></li>
+</ol>
+
+
+<p>Теперь мы можем запускать, останавливать и перезапускать нашу базу командами:</p>
+
+<pre><code>sudo service mongod start
+sudo service mongod stop
+sudo service mongod restart
+</code></pre>
+
+<p>Запустить консольный клиент к базе можно командой <code>mongo</code>.</p>
+
+<h4>2. Добавление админа БД</h4>
+
+<h5>Добавление админа для всей БД</h5>
+
+<p>Для добавления учетных записей используется команда <code>db.createUser()</code>, чтобы создать учетную запись администратора для всех баз нужно выполнить:</p>
+
+<pre><code>use admin
+db.createUser(
+  {
+    user: "siteUserAdmin",
+    pwd: "password",
+    roles:
+    [
+      {
+        role: "userAdminAnyDatabase",
+        db: "admin"
+      }
+    ]
+  }
+)
+</code></pre>
+
+<p>Чтобы включить вход по учетным записям, в конфигурационном файле <code>/etc/mongod.conf</code> нужно раскомментировать строку:</p>
+
+<pre><code>auth = true
+</code></pre>
+
+<p>Для коннекта к базе нужно выполнить команду:</p>
+
+<pre><code>mongo -u siteUserAdmin -p
+</code></pre>
+
+<h5>Добавление админа для локальной базы</h5>
+
+<p>Чтобы создать учетную запись администратора для конкретной базы, нужно выполнить команду <code>db.createUser()</code>:</p>
+
+<pre><code>db.createUser(
+  {
+    user: "db1_admin",
+    pwd: "password",
+    roles:
+    [
+      {
+        role: "userAdmin",
+        db: "db1"
+      }
+    ]
+  }
+)
+</code></pre>
+
+<p>Чтобы админ мог читать и писать из базы, добавим ему соответствующую роль:</p>
+
+<pre><code>db.grantRolesToUser(
+  "db1_admin",
+  [
+    {
+      role: "readWrite", db: "db1"
+    }
+  ]
+)
+</code></pre>
+
+<p>Войти в базу можно командой:</p>
+
+<pre><code>mongo -u db1_admin -p password db1
+</code></pre>
+
+<h5>Импорт CSV файла</h5>
+
+<p>Импортирование выполняется командой <code>mongoimport</code>. Пусть у нас есть файл <code>file.csv</code>, тогда импортировать его в MongoDB можно так:</p>
+
+<pre><code>mongoimport --db db1 --type csv --headerline --file file.csv 
+</code></pre>
+
+<p>Или так, если уже создана учетная запись для базы:</p>
+
+<pre><code>mongoimport --db db1 --type csv --headerline --file file.csv -u db1_admin -p
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Создание Sliding Menu приложения в Android Studio]]></title>
