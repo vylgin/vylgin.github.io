@@ -4,7 +4,7 @@
   <title><![CDATA[Категория: Mongodb | vylgin]]></title>
   <link href="http://blog.vylgin.pro/blog/categories/mongodb/atom.xml" rel="self"/>
   <link href="http://blog.vylgin.pro/"/>
-  <updated>2014-06-17T09:02:51-04:00</updated>
+  <updated>2014-06-20T15:26:44-04:00</updated>
   <id>http://blog.vylgin.pro/</id>
   <author>
     <name><![CDATA[Виталий Вылгин]]></name>
@@ -18,14 +18,14 @@
     <link href="http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb/"/>
     <updated>2014-06-17T04:03:03-04:00</updated>
     <id>http://blog.vylgin.pro/blog/2014/06/17/kak-ia-importiroval-csv-v-mongodb</id>
-    <content type="html"><![CDATA[<p>Один мой хороший друг дал мне телефонный справочник одного района в виде дампа базы MySQL. &ldquo;Это хорошая возможность познакомиться с MongoDB&rdquo; &ndash; подумал я.</p>
+    <content type="html"><![CDATA[<p>В глаза попался дамп базы MySQL с структурированными данными. &ldquo;Это хорошая возможность познакомиться с MongoDB&rdquo; &ndash; подумал я.</p>
 
 <p>Ниже я расскажу о том, как экспортировал данные из дампа MySQL в MongoDB через промежуточный CSV файл.</p>
 
 <!-- more -->
 
 
-<p>Я развернул mysql-сервер, залил в него дамп справочника и сделал экспорт данных в CSV файл. О том как это сделать полно информации, так что подробно описывать не буду, в силу зрелости MySQL.</p>
+<p>Я развернул mysql-сервер, залил в него дамп и сделал экспорт данных в CSV файл. О том как это сделать полно информации, так что подробно описывать не буду, в силу зрелости MySQL.</p>
 
 <h4>1. Установка MongoDB на ubuntu 14.04</h4>
 
