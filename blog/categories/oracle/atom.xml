@@ -4,7 +4,7 @@
   <title><![CDATA[Категория: Oracle | vylgin]]></title>
   <link href="http://blog.vylgin.pro/blog/categories/oracle/atom.xml" rel="self"/>
   <link href="http://blog.vylgin.pro/"/>
-  <updated>2014-06-20T15:26:44-04:00</updated>
+  <updated>2014-07-29T03:10:46-04:00</updated>
   <id>http://blog.vylgin.pro/</id>
   <author>
     <name><![CDATA[Виталий Вылгин]]></name>
@@ -12,6 +12,36 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Тестовое задание по Oracle ADF]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/07/29/tiestovoie-zadaniie-po-oracle-adf/"/>
+    <updated>2014-07-29T02:10:05-04:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/07/29/tiestovoie-zadaniie-po-oracle-adf</id>
+    <content type="html"><![CDATA[<p>Полтора года назад я проходил собеседование в одной фирме на позицию &ldquo;Java Developer&rdquo;, в которой дали тестовое задание по технологиям Oracle ADF и Oracle DB.</p>
+
+<h3>Задание</h3>
+
+<p>В БД (Oracle) две таблички(связь один-ко-многим):
+книга (может быть несколько книг, с одинаковым автором). Поля: название книги, дата выпуска, автор
+автор. Поля: Фамилия, Имя, Отчество, Дата рождения</p>
+
+<p>В программе должна быть возможность:</p>
+
+<ol>
+<li>получения всех книг конкретного автора</li>
+<li>получение книг, выпущенных за определенный интервал</li>
+<li>посредством вызова веб-сервиса(веб сервис в этом же приложении), осуществлять подгрузку фото книг.</li>
+</ol>
+
+
+<h3>Решение</h3>
+
+<p><div class="embed-video-container"><iframe src="http://www.youtube.com/embed/hzqDaC_AOOI" allowfullscreen></iframe></div></p>
+
+<p>Исходники на GitHub: <a href="https://github.com/vylgin/OracleADFTestTask">https://github.com/vylgin/OracleADFTestTask</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Oracle Database и хранимые процедуры на языке Java]]></title>
