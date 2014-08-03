@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Категория: Actionscript | vylgin]]></title>
+  <link href="http://blog.vylgin.pro/blog/categories/actionscript/atom.xml" rel="self"/>
+  <link href="http://blog.vylgin.pro/"/>
+  <updated>2014-08-03T08:09:05-04:00</updated>
+  <id>http://blog.vylgin.pro/</id>
+  <author>
+    <name><![CDATA[Виталий Вылгин]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Игра SlotMachine на чистом ActionScript]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/07/31/ighra-slotmachine-na-chistom-actionscript/"/>
+    <updated>2014-07-31T01:54:10-04:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/07/31/ighra-slotmachine-na-chistom-actionscript</id>
+    <content type="html"><![CDATA[<p>Прошлым летом, на одном собеседовании, мне дали тестовое задание: написать игру Slot Machine на чистом actionscript. До этого момента, у меня не было опыта в разработке приложений на этом языке программирвоания. За две недели я изучил actionscript и создал игру.</p>
+
+<p><a href="http://vylgin.pro/slotmachine"><img src="/images/post_7/GameWindowScreenshot.png" alt="Играть в SlotMachine" /></a></p>
+
+<p><a href="http://vylgin.pro/slotmachine">Играть онлайн</a></p>
+
+<p>Увлекательная статья о создании игры &ndash; <a href="https://github.com/vylgin/SlotMachine/wiki/%D0%98%D0%B3%D1%80%D0%B0-%D0%B8%D0%B7%D0%BD%D1%83%D1%82%D1%80%D0%B8.">Игра изнутри.</a></p>
+
+<p>Исходный код выложен на <a href="https://github.com/vylgin/SlotMachine">GitHub</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>
