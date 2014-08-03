@@ -8,7 +8,9 @@ categories: [actionscript, osmf, flex sdk]
 
 Тестовое задание по созданию медиаплеера на языке программирования ActionScript, фреймворка Open Source Media Framework и пакета Flex SDK.
 
-{% img /images/post_8/flex_osmf_player.png %}
+[![Демо](/images/post_8/flex_osmf_player.png)](http://vylgin.pro/flexosmfplayer)
+
+[Демо](http://vylgin.pro/flexosmfplayer)
 
 С информацией о тектсе задания, процессе создания и внутренней архитектуре медиаплеера можно ознакомиться в статье [«История создания»](https://github.com/vylgin/FlexOSMFPlayer/wiki/История%20создания) 
 
