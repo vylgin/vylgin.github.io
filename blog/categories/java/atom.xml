@@ -4,7 +4,7 @@
   <title><![CDATA[Категория: Java | vylgin]]></title>
   <link href="http://blog.vylgin.pro/blog/categories/java/atom.xml" rel="self"/>
   <link href="http://blog.vylgin.pro/"/>
-  <updated>2014-08-03T10:07:11-04:00</updated>
+  <updated>2014-12-08T02:38:29-05:00</updated>
   <id>http://blog.vylgin.pro/</id>
   <author>
     <name><![CDATA[Виталий Вылгин]]></name>
@@ -12,6 +12,173 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Совместное использование Java и Javascript]]></title>
+    <link href="http://blog.vylgin.pro/blog/2014/12/05/sovmiestnoie-ispol%27zovaniie-java-i-javascript/"/>
+    <updated>2014-12-05T03:58:25-05:00</updated>
+    <id>http://blog.vylgin.pro/blog/2014/12/05/sovmiestnoie-ispol'zovaniie-java-i-javascript</id>
+    <content type="html"><![CDATA[<p><img class="left" src="/images/post_2014-12-05/1.jpg" width="150">
+Javascript победил на фронтенде и завоевывает бекенд, а если добавить богатство библиотек языка Java, то можно получить любопытную смесь.</p>
+
+<p>Поддержка динамических языков началась в java 6, когда был реализован стандарт JSR 223. Поддержка javascript осуществлялась с помощью <a href="https://developer.mozilla.org/ru/docs/Rhino" title="Rhino">Rhino</a>, но эта имплементация была очень медленной и в java 8 от нее отказались в пользу Nashorn.</p>
+
+<!-- more -->
+
+
+<h3>Nashorn</h3>
+
+<ul>
+<li>Javascript engine для jvm.</li>
+<li>Полная java имплементация.</li>
+<li>Полностью совместима с ecmascript 5.1</li>
+<li>Полностью собирается в байткод, не интерпретируется</li>
+</ul>
+
+
+<h3>Примеры использования</h3>
+
+<h4>В качестве системных скриптов.</h4>
+
+<p>Создадим скрипт, который выводит текущий год, используя класс Date языка Java.</p>
+
+<p>Создать файл <code>now_year.jjs</code>:</p>
+
+<pre><code>#!/path_to_jdk8/bin/jjs
+
+var Date = Java.type('java.util.Date');
+
+var date = new Date();
+date.year += 1900;
+
+// Вывод с помощью javascript
+print("javascript, print:");
+print("Now year: " + date.year);
+
+// Вывод с помощью java
+var System = Java.type('java.lang.System');
+System.out.println("\njava, System.out.println:");
+System.out.println("Now year: " + date.year);
+</code></pre>
+
+<p>Сделаем исполняемым, выполнив в консоле команду:</p>
+
+<pre><code>    chmod +x now_year.jjs
+</code></pre>
+
+<p>Запустим скрипт:</p>
+
+<pre><code>    /now_year.jjs
+</code></pre>
+
+<p>Видим результат:</p>
+
+<pre><code>    javascript, print:
+    Now year: 2014
+
+    java, System.out.println:
+    Now year: 2014
+</code></pre>
+
+<h4>Добавление javascript в java код</h4>
+
+<p>Пример из статьи на хабре <a href="http://habrahabr.ru/post/195870">Введение в Nashorn</a>.</p>
+
+<pre><code>import javax.script.*;
+
+public class EvalScript {
+    public static void main(String[] args) throws Exception {
+        // create a script engine manager
+        ScriptEngineManager factory = new ScriptEngineManager();
+        // create a Nashorn script engine
+        ScriptEngine engine = factory.getEngineByName("nashorn");
+        // evaluate JavaScript statement
+        try {
+            engine.eval("print('Hello, World!');");
+        } catch (final ScriptException se) { se.printStackTrace(); }
+    }
+}
+</code></pre>
+
+<p>Компилируем класс:</p>
+
+<pre><code>./javac EvalScript.java 
+</code></pre>
+
+<p>И выполняем его:</p>
+
+<pre><code>./java EvalScript
+</code></pre>
+
+<p>Видим вывод:</p>
+
+<pre><code>Hello, World!
+</code></pre>
+
+<h4>Расширение функциональности приложения в рантайме</h4>
+
+<p>Пример из статьи на хабре <a href="http://habrahabr.ru/post/195870">Введение в Nashorn</a>.</p>
+
+<p><strong>MyScript.js</strong></p>
+
+<pre><code>var MyClass = Java.type("EvalScript.MyClass");
+var my = new MyClass();
+my.printMsg("Hello!");
+</code></pre>
+
+<p><strong>EvalScript.java</strong></p>
+
+<pre><code>import javax.script.*;
+import java.io.*;
+
+public class EvalScript {
+
+    public static void main(String[] args) throws Exception {
+        // create a script engine manager
+        ScriptEngineManager factory = new ScriptEngineManager();
+        // create a Nashorn script engine
+        ScriptEngine engine = factory.getEngineByName("nashorn");
+        // evaluate JavaScript statement
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            engine.eval(br);
+        } catch (final ScriptException se) { se.printStackTrace(); }
+    }
+
+    public static class MyClass {
+        public void printMsg(String msg) {
+            System.out.println("printMsg : "+msg);
+        }
+    }
+}
+</code></pre>
+
+<p>Скомпилировав, запускаем:</p>
+
+<pre><code>./java EvalScript &lt; MyScript.js
+</code></pre>
+
+<p>Видим вывод:</p>
+
+<pre><code>printMsg : Hello!
+</code></pre>
+
+<h3>Зачем это нужно?</h3>
+
+<p>Да хотя бы просто так, занять себя в один из вечеров.</p>
+
+<h3>Ссылки</h3>
+
+<ul>
+<li><a href="http://www.oracle.com/technetwork/articles/java/jf14-nashorn-2126515.html">http://www.oracle.com/technetwork/articles/java/jf14-nashorn-2126515.html</a></li>
+<li><a href="http://www.infoworld.com/article/2607426/application-development/nashorn--javascript-made-great-in-java-8.html">http://www.infoworld.com/article/2607426/application-development/nashorn&mdash;javascript-made-great-in-java-8.html</a></li>
+<li><a href="https://github.com/gAmUssA/java-scripting-experiments">https://github.com/gAmUssA/java-scripting-experiments</a></li>
+<li><a href="https://speakerdeck.com/vikgamov/nosoroghi-na-volie-prikladnyie-vozmozhnosti-ispol-zovaniia-javascript-v-razrabotkie-na-java">https://speakerdeck.com/vikgamov/nosoroghi-na-volie-prikladnyie-vozmozhnosti-ispol-zovaniia-javascript-v-razrabotkie-na-java</a></li>
+<li><a href="http://habrahabr.ru/post/195870/">http://habrahabr.ru/post/195870</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Тестовое задание по Oracle ADF]]></title>

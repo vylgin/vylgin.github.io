@@ -39,8 +39,14 @@
         <lastmod>2014-08-03T10:07:03-04:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://blog.vylgin.pro/blog/2014/12/05/sovmiestnoie-ispol%27zovaniie-java-i-javascript/
+        </loc>
+        <lastmod>2014-12-08T02:38:22-05:00</lastmod>
+    </url>
+    <url>
         <loc>http://blog.vylgin.pro/blog/archives/</loc>
-        <lastmod>2014-08-03T10:07:03-04:00</lastmod>
+        <lastmod>2014-12-08T02:38:22-05:00</lastmod>
     </url>
     <url>
         <loc>http://blog.vylgin.pro/robots.txt</loc>
@@ -48,6 +54,6 @@
     </url>
     <url>
         <loc>http://blog.vylgin.pro/</loc>
-        <lastmod>2014-08-03T10:07:03-04:00</lastmod>
+        <lastmod>2014-12-08T02:38:22-05:00</lastmod>
     </url>
 </urlset>
