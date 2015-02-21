@@ -4,7 +4,7 @@
   <title><![CDATA[vylgin]]></title>
   <link href="http://blog.vylgin.pro/atom.xml" rel="self"/>
   <link href="http://blog.vylgin.pro/"/>
-  <updated>2014-12-08T02:38:29-05:00</updated>
+  <updated>2015-02-21T02:33:13-05:00</updated>
   <id>http://blog.vylgin.pro/</id>
   <author>
     <name><![CDATA[Виталий Вылгин]]></name>
@@ -12,6 +12,79 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Unit-тестирование в Android Studio становится проще]]></title>
+    <link href="http://blog.vylgin.pro/blog/2015/02/20/unit-testing-in-android-studio/"/>
+    <updated>2015-02-20T12:19:32-05:00</updated>
+    <id>http://blog.vylgin.pro/blog/2015/02/20/unit-testing-in-android-studio</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://blog.vylgin.pro/images/post_2015-02-20/android-testing.png" width="150">
+<em>«Как бы хорошо было запускать unit-тесты без симулятора или физического android устройства, — скорее всего, именно так думает каждый android-разработчик. — Да еще и без Robolectric, на локальной JVM, отделив их от функциональных».</em></p>
+
+<p>Возможность разделения исходного кода функциональных и unit-тестов появилась в Android Studio версии 1.1 и плагина Gradle версии 1.1.0, с выполнением последних на локальной JVM.</p>
+
+<!-- more -->
+
+
+<h3>Включение поддержки unit-тестов в Android Studio</h3>
+
+<ol>
+<li><p>Для начала необходимо обновить Android Studio до версии 1.1.</p></li>
+<li><p>Обновить версию gradle плагина в build.gradle на 1.1.0 или более новую (это можно сделать из среды разработки File > Project Structure)</p>
+
+<p> <img src="http://blog.vylgin.pro/images/post_2015-02-20/2.png"></p></li>
+<li><p>Добавить JUnit зависимость в app/build.gradle</p>
+
+<p> <img src="http://blog.vylgin.pro/images/post_2015-02-20/3.png"></p>
+
+<pre><code> dependencies {
+     testCompile 'junit:junit:4.12'
+ }
+</code></pre></li>
+<li><p>Включить unit-тестирование в Settings > Gradle > Experimental</p>
+
+<p> <img src="http://blog.vylgin.pro/images/post_2015-02-20/4.png"></p></li>
+<li><p>Выполнить синхронизацию проекта с помощью gradle</p>
+
+<p> <img src="http://blog.vylgin.pro/images/post_2015-02-20/5.png" width="300"></p></li>
+<li><p>Открыть панель &ldquo;Build variants&rdquo; и изменить Test Artifact на &ldquo;Unit tests&rdquo;</p>
+
+<p> <img src="http://blog.vylgin.pro/images/post_2015-02-20/6.png"></p></li>
+<li><p>Добавить каталоги <code>src/test/java</code> в модуль проекта</p>
+
+<p> <img src="http://blog.vylgin.pro/images/post_2015-02-20/7.png" width="200"></p></li>
+</ol>
+
+
+<h3>Запуск тестов с помощью Gradle</h3>
+
+<p>Для запуска unit-тестов нужно выполнить из каталога проекта, в консоли, команду для linux (OS X):</p>
+
+<pre><code>./gradlew test
+</code></pre>
+
+<p>Для windows:</p>
+
+<pre><code>gradlew.bat test
+</code></pre>
+
+<p>Можно указать тип запускаемого теста командами:</p>
+
+<pre><code>./gradlew testDebug
+./gradlew testRelease
+</code></pre>
+
+<p>Для выполнения одного теста, или группы тестов, можно задать маску у флага <code>--tests</code> команды <code>gradlew</code>:</p>
+
+<pre><code>./gradlew testDebug --tests='*.MyTestClass'
+</code></pre>
+
+<p>Чтобы запускать отдельно unit-тесты от функциональных, я задаю имена файлов с <code>*UnitTest.java</code> на конце и запускаю их командой:</p>
+
+<pre><code>./gradlew testDebug --tests='*UnitTest'
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Совместное использование Java и Javascript]]></title>
