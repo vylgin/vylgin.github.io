@@ -349,16 +349,21 @@ categories: [android, slidingmenu, actionbarsherlock]
 	
 	    @Override
 	    public Fragment getItem(int arg0) {
-	        switch (arg0) {
-	            case 0:
-	                return new FragmentTabColor(Color.RED);
-	            case 1:
-	                return new FragmentTabColor(Color.GREEN);
-	            case 2:
-	                return new FragmentTabColor(Color.BLUE);
-	        }
-	
-	        return null;
+	        FragmentTabColor fragmentTabColor = new FragmentTabColor();
+
+            switch (arg0) {
+                case 0:
+                    fragmentTabColor.setColor(Color.RED);
+                    break;
+                case 1:
+                    fragmentTabColor.setColor(Color.GREEN);
+                    break;
+                case 2:
+                    fragmentTabColor.setColor(Color.BLUE);
+                    break;
+            }
+
+            return fragmentTabColor;
 	    }
 	
 	    @Override
@@ -371,27 +376,37 @@ categories: [android, slidingmenu, actionbarsherlock]
 
 	public class FragmentTabColor extends SherlockFragment {
 	
-	    private int color;
+	    private static final String COLOR = "color";
+
+        private int color;
+
+        public FragmentTabColor() {
+        }
+
+        public void setColor(int color) {
+            this.color = color;
+        }
 	
-	    public FragmentTabColor(int color) {
-	        this.color = color;
-	    }
-	
-	    @Override
-	    public View onCreateView(LayoutInflater inflater,
-	                             ViewGroup container,
-	                             Bundle savedInstanceState) {
-	        View view = inflater.inflate(R.layout.fragment_second_color, container, false);
-	        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
-	        imageView.setBackgroundColor(color);
-	
-	        return view;
-	    }
+        @Override
+        public View onCreateView(LayoutInflater inflater,
+                                 ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            if(savedInstanceState != null)
+                color = savedInstanceState.getInt(COLOR);
+
+            View view = inflater.inflate(R.layout.fragment_second_color, container, false);
+            ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+            imageView.setBackgroundColor(color);
+
+            return view;
+        }
 	
 	    @Override
 	    public void onSaveInstanceState(Bundle outState) {
 	        super.onSaveInstanceState(outState);
 	        setUserVisibleHint(true);
+	        outState.putInt(COLOR, color);
 	    }
 	}
 
@@ -597,3 +612,4 @@ categories: [android, slidingmenu, actionbarsherlock]
 ### Страница проекта на github
 
 С полным исходным кодом приложения можно ознакомиться на странице проекта [https://github.com/vylgin/SlidingApplication](https://github.com/vylgin/SlidingApplication).
+
