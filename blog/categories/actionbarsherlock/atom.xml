@@ -4,7 +4,7 @@
   <title><![CDATA[Категория: Actionbarsherlock | vylgin]]></title>
   <link href="http://blog.vylgin.pro/blog/categories/actionbarsherlock/atom.xml" rel="self"/>
   <link href="http://blog.vylgin.pro/"/>
-  <updated>2015-02-21T02:33:13-05:00</updated>
+  <updated>2015-02-22T06:28:16-05:00</updated>
   <id>http://blog.vylgin.pro/</id>
   <author>
     <name><![CDATA[Виталий Вылгин]]></name>
@@ -385,16 +385,21 @@ compile 'com.android.support:support-v4:19.0.0'
 
     @Override
     public Fragment getItem(int arg0) {
+        FragmentTabColor fragmentTabColor = new FragmentTabColor();
+
         switch (arg0) {
             case 0:
-                return new FragmentTabColor(Color.RED);
+                fragmentTabColor.setColor(Color.RED);
+                break;
             case 1:
-                return new FragmentTabColor(Color.GREEN);
+                fragmentTabColor.setColor(Color.GREEN);
+                break;
             case 2:
-                return new FragmentTabColor(Color.BLUE);
+                fragmentTabColor.setColor(Color.BLUE);
+                break;
         }
 
-        return null;
+        return fragmentTabColor;
     }
 
     @Override
@@ -408,9 +413,14 @@ compile 'com.android.support:support-v4:19.0.0'
 
 <pre><code>public class FragmentTabColor extends SherlockFragment {
 
+    private static final String COLOR = "color";
+
     private int color;
 
-    public FragmentTabColor(int color) {
+    public FragmentTabColor() {
+    }
+
+    public void setColor(int color) {
         this.color = color;
     }
 
@@ -418,6 +428,10 @@ compile 'com.android.support:support-v4:19.0.0'
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if(savedInstanceState != null)
+            color = savedInstanceState.getInt(COLOR);
+
         View view = inflater.inflate(R.layout.fragment_second_color, container, false);
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
         imageView.setBackgroundColor(color);
@@ -429,6 +443,7 @@ compile 'com.android.support:support-v4:19.0.0'
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         setUserVisibleHint(true);
+        outState.putInt(COLOR, color);
     }
 }
 </code></pre>
